@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -30,3 +31,11 @@ def kirish(request):
 def chiqish(request):
     logout(request)
     return redirect('kirish')
+
+@login_required
+def profil(request):
+    mening_kitoblarim = request.user.books.all()
+    context = {
+        'mening kitoblarim':mening_kitoblarim
+    }
+    return render(request, 'accounts/profil.html', context)

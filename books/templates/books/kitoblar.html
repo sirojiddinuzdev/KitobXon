@@ -9,10 +9,10 @@
 
 <nav class="navbar navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="#">📚 KitobXon</a>
+        <a class="navbar-brand" href="{% url 'kitoblar-royhati' %}">📚 KitobXon</a>
         <div>
             {% if request.user.is_authenticated %}
-                <span class="text-white me-3">👤 {{ request.user.username }}</span>
+                <a href="{% url 'profil' %}" class="btn btn-outline-light btn-sm me-2">👤 {{ request.user.username }}</a>
                 <a href="{% url 'chiqish' %}" class="btn btn-outline-light btn-sm">Chiqish</a>
             {% else %}
                 <a href="{% url 'kirish' %}" class="btn btn-outline-light btn-sm me-2">Kirish</a>
