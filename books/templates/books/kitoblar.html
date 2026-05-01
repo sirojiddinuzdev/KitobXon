@@ -35,9 +35,19 @@
                         <span class="badge bg-secondary">{{ kitob.janr }}</span>
                         <p class="card-text mt-2">{{ kitob.tavsif }}</p>
                     </div>
-                    <div class="card-footer text-muted">
-                        👤 {{ kitob.ega.username }}
-                    </div>
+                    <div class="card-footer text-muted d-flex justify-content-between align-items-center">
+    <span>👤 {{ kitob.ega.username }}</span>
+    
+    {% if request.user.is_authenticated %}
+        {% if kitob.ega != request.user %}
+            <a href="{% url 'sorov-yuborish' kitob.id %}" class="btn btn-sm btn-outline-primary">
+                📩 So'rov yuborish
+            </a>
+        {% else %}
+            <span class="badge bg-success">Sizning kitobingiz</span>
+        {% endif %}
+    {% endif %}
+</div>
                 </div>
             </div>
             {% endfor %}

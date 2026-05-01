@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Kitob
+from .models import Kitob,Almashitirish
 from django.contrib.auth.decorators import login_required
 from .forms import KitobForm
 # Create your views here.
@@ -23,3 +23,14 @@ def kitob_qoshish(request):
     else:
         form = KitobForm()
     return render(request, 'books/kitob_qoshish.html', {'form':form})
+
+@login_required
+def sorov_yuborish(request,kitob_id):
+    kitob = Kitob.objects.get(id=kitob_id)
+    if kitob.ega==request.user:
+        return redirect('kitoblar-royhati')
+    mavjud_sorov = Almashitirish.objects.filter(kitob=kitob,yuboruvchi=request.user).exists()
+    if not mavjud_sorov:
+        Almashitirish.objects.create(kitob=kitob,yuboruvchi=request.user)
+
+    return redirect('kitoblar-royhati')
