@@ -15,7 +15,7 @@ def kitoblar_royhati(request):
 def kitob_qoshish(request):
     if request.method == 'POST':
         form = KitobForm(request.POST, request.FILES)
-        if form.is_valid:
+        if form.is_valid():
             kitob = form.save(commit=False)
             kitob.ega = request.user
             kitob.save()
@@ -34,3 +34,24 @@ def sorov_yuborish(request,kitob_id):
         Almashitirish.objects.create(kitob=kitob,yuboruvchi=request.user)
 
     return redirect('kitoblar-royhati')
+
+@login_required
+def sorov_qabul(request,sorov_id):
+    sorov = Almashitirish.objects.get(id=sorov_id)
+
+    if sorov.kitob.ega == request.user:
+        sorov.holat = "qabul"
+        sorov.save()
+
+        sorov.kitob.mavjud = False
+        sorov.kitob.save()
+    return redirect('profil')
+
+@login_required
+def sorov_rad(request,sorov_id):
+    sorov = Almashitirish.objects.get(id=sorov_id)
+
+    if sorov.kitob.ega==request.user:
+        sorov.holat = 'rad'
+        sorov.save()
+        return redirect('profil')
