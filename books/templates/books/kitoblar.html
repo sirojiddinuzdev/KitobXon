@@ -20,7 +20,33 @@
             {% endif %}
         </div>
     </div>
-</nav>
+</nav><!-- Qidiruv va filterlash -->
+<div class="container mb-4">
+    <form method="GET" action="{% url 'kitoblar-royhati' %}">
+        <div class="row g-2">
+            <div class="col-md-6">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="form-control" 
+                    placeholder="Kitob nomi yoki muallif..."
+                    value="{{ qidiruv|default:'' }}"
+                >
+            </div>
+            <div class="col-md-4">
+                <select name="janr" class="form-select">
+                    <option value="">Barcha janrlar</option>
+                    <option value="badiiy" {% if janr == 'badiiy' %}selected{% endif %}>Badiiy</option>
+                    <option value="Selfhelp" {% if janr == 'Selfhelp' %}selected{% endif %}>Self Help</option>
+                    <option value="boshqa" {% if janr == 'boshqa' %}selected{% endif %}>Boshqa</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-dark w-100">🔍 Qidirish</button>
+            </div>
+        </div>
+    </form>
+</div>
 
 <div class="container">
     <h4 class="mb-4">Mavjud kitoblar</h4>
@@ -29,6 +55,13 @@
             {% for kitob in kitoblar %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
+                    {% if kitob.rasm %}
+                        <img src="{{ kitob.rasm.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-white">📚</span>
+                        </div>
+                    {% endif %}
                     <div class="card-body">
                         <h5 class="card-title">{{ kitob.nomi }}</h5>
                         <p class="text-muted">✍️ {{ kitob.muallif }}</p>
@@ -36,18 +69,17 @@
                         <p class="card-text mt-2">{{ kitob.tavsif }}</p>
                     </div>
                     <div class="card-footer text-muted d-flex justify-content-between align-items-center">
-    <span>👤 {{ kitob.ega.username }}</span>
-    
-    {% if request.user.is_authenticated %}
-        {% if kitob.ega != request.user %}
-            <a href="{% url 'sorov-yuborish' kitob.id %}" class="btn btn-sm btn-outline-primary">
-                📩 So'rov yuborish
-            </a>
-        {% else %}
-            <span class="badge bg-success">Sizning kitobingiz</span>
-        {% endif %}
-    {% endif %}
-</div>
+                        <span>👤 {{ kitob.ega.username }}</span>
+                        {% if request.user.is_authenticated %}
+                            {% if kitob.ega != request.user %}
+                                <a href="{% url 'sorov-yuborish' kitob.id %}" class="btn btn-sm btn-outline-primary">
+                                    📩 So'rov yuborish
+                                </a>
+                            {% else %}
+                                <span class="badge bg-success">Sizning kitobingiz</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% endfor %}

@@ -6,8 +6,20 @@ from .forms import KitobForm
 
 def kitoblar_royhati(request):
     kitoblar = Kitob.objects.all()
+
+
+    qidiruv = request.GET.get('q')
+    if qidiruv:
+        kitoblar = kitoblar.filter(nomi__icontains = qidiruv) | kitoblar.filter(muallif__icontains = qidiruv)
+    janr = request.GET.get('janr')
+    if janr:
+        kitoblar = kitoblar.filter(janr=janr)
+
     context = {
-        'kitoblar':kitoblar
+        'kitoblar':kitoblar,
+        'qidiruv':qidiruv,
+        'janr':janr
+        
     }
     return render(request, 'books/kitoblar.html',context)
 

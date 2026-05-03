@@ -48,10 +48,3 @@ def chiqish(request):
     logout(request)
     return redirect('kirish')
 
-# @login_required
-# def profil(request):
-#     mening_kitoblarim = request.user.books.all()
-#     context = {
-#         'mening-kitoblarim':mening_kitoblarim
-#     }
-#     return render(request, 'accounts/profil.html', context)
