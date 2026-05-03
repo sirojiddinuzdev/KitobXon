@@ -19,6 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # MEDIA
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+STATICFILES_DIRS = [BASE_DIR / 'static',]
 
 
 # Quick-start development settings - unsuitable for production
@@ -30,7 +31,7 @@ SECRET_KEY = 'django-insecure-@3vqwxe#8dfzyg3_7*#pdt@fhs0a#f030ai916k052eazu1yet
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

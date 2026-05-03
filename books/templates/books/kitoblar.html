@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -20,11 +21,13 @@
             {% endif %}
         </div>
     </div>
-</nav><!-- Qidiruv va filterlash -->
+</nav>
+
+<!-- Qidiruv va filterlash -->
 <div class="container mb-4">
     <form method="GET" action="{% url 'kitoblar-royhati' %}">
         <div class="row g-2">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <input 
                     type="text" 
                     name="q" 
@@ -33,12 +36,34 @@
                     value="{{ qidiruv|default:'' }}"
                 >
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <select name="janr" class="form-select">
                     <option value="">Barcha janrlar</option>
                     <option value="badiiy" {% if janr == 'badiiy' %}selected{% endif %}>Badiiy</option>
                     <option value="Selfhelp" {% if janr == 'Selfhelp' %}selected{% endif %}>Self Help</option>
-                    <option value="boshqa" {% if janr == 'boshqa' %}selected{% endif %}>Boshqa</option>
+                    <option value="it" {% if janr == 'it' %}selected{% endif %}>IT</option>
+                    <option value="romantik" {% if janr == 'romantik' %}selected{% endif %}>Romantik</option>
+                    <option value="ilmiy_ommabop" {% if janr == 'ilmiy_ommabop' %}selected{% endif %}>Ilmiy-Ommabop</option>
+                    <option value="biznes_iqtisod" {% if janr == 'biznes_iqtisod' %}selected{% endif %}>Biznes-Iqtisod</option>
+                    <option value="psixologiya" {% if janr == 'psixologiya' %}selected{% endif %}>Psixologiya</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="hudud" class="form-select">
+                    <option value="">Barcha hududlar</option>
+                    <option value="toshkent" {% if hudud == 'toshkent' %}selected{% endif %}>Toshkent</option>
+                    <option value="samarkand" {% if hudud == 'samarkand' %}selected{% endif %}>Samarqand</option>
+                    <option value="buxoro" {% if hudud == 'buxoro' %}selected{% endif %}>Buxoro</option>
+                    <option value="andijon" {% if hudud == 'andijon' %}selected{% endif %}>Andijon</option>
+                    <option value="fargona" {% if hudud == 'fargona' %}selected{% endif %}>Farg'ona</option>
+                    <option value="namangan" {% if hudud == 'namangan' %}selected{% endif %}>Namangan</option>
+                    <option value="qashqadaryo" {% if hudud == 'qashqadaryo' %}selected{% endif %}>Qashqadaryo</option>
+                    <option value="surxondaryo" {% if hudud == 'surxondaryo' %}selected{% endif %}>Surxondaryo</option>
+                    <option value="xorazm" {% if hudud == 'xorazm' %}selected{% endif %}>Xorazm</option>
+                    <option value="navoiy" {% if hudud == 'navoiy' %}selected{% endif %}>Navoiy</option>
+                    <option value="jizzax" {% if hudud == 'jizzax' %}selected{% endif %}>Jizzax</option>
+                    <option value="sirdaryo" {% if hudud == 'sirdaryo' %}selected{% endif %}>Sirdaryo</option>
+                    <option value="qoraqalpogiston" {% if hudud == 'qoraqalpogiston' %}selected{% endif %}>Qoraqalpog'iston</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -58,14 +83,13 @@
                     {% if kitob.rasm %}
                         <img src="{{ kitob.rasm.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
                     {% else %}
-                        <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <span class="text-white">📚</span>
-                        </div>
+                        <img src="{% static 'books/default_kitob.jpg' %}" class="card-img-top" style="height: 200px; object-fit: cover;">
                     {% endif %}
                     <div class="card-body">
                         <h5 class="card-title">{{ kitob.nomi }}</h5>
                         <p class="text-muted">✍️ {{ kitob.muallif }}</p>
                         <span class="badge bg-secondary">{{ kitob.janr }}</span>
+                        <span class="badge bg-info">📍 {{ kitob.hudud }}</span>
                         <p class="card-text mt-2">{{ kitob.tavsif }}</p>
                     </div>
                     <div class="card-footer text-muted d-flex justify-content-between align-items-center">

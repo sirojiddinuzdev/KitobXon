@@ -6,7 +6,29 @@ from django.contrib.auth.models import User
 class Kitob(models.Model):
     Janr_Tanlov = [     
         ('badiiy','Badiiy'),
-        ('Selfhelp','Self Help')
+        ('Selfhelp','Self Help'),
+        ('it','IT'),
+        ('romantik','Romantik'),
+        ('ilmiy_ommabop','Ilmiy-Ommabop'),
+        ('biznes_iqtisod','Biznes-Iqtisod'),
+        ('psixologiya','Psixologiya')
+    ]
+
+    Hudud_tanlov = [
+        ('toshkent','Toshkent'),
+        ('samarkand', 'Samarqand'),
+        ('buxoro', 'Buxoro'),
+        ('andijon', 'Andijon'),
+        ('fargona', 'Farg\'ona'),
+        ('namangan', 'Namangan'),
+        ('qashqadaryo', 'Qashqadaryo'),
+        ('surxondaryo', 'Surxondaryo'),
+        ('xorazm', 'Xorazm'),
+        ('navoiy', 'Navoiy'),
+        ('jizzax', 'Jizzax'),
+        ('sirdaryo', 'Sirdaryo'),
+        ('qoraqalpogiston', 'Qoraqalpog\'iston'),
+
     ]
     nomi = models.CharField(max_length=200)
     muallif = models.CharField(max_length=100)
@@ -16,6 +38,7 @@ class Kitob(models.Model):
     ega = models.ForeignKey(User,on_delete=models.CASCADE,related_name='books')
     mavjud = models.BooleanField(default=True)
     yaratildi = models.DateTimeField(auto_now_add=True)
+    hudud = models.CharField(max_length=20,choices=Hudud_tanlov,default='nomalum')
 
     def __str__(self):
         return f"{self.nomi} - {self.muallif}"
