@@ -8,5 +8,5 @@ class Profil(models.Model):
     telefon = models.CharField(max_length=15,blank=True)
     instagram = models.CharField(max_length=50,blank=True)
 
-def __str__(self):
-    return f"{self.user.username} profili"
+    def __str__(self):
+        return f"{self.user.username} profili"

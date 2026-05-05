@@ -28,7 +28,7 @@ class Kitob(models.Model):
         ('jizzax', 'Jizzax'),
         ('sirdaryo', 'Sirdaryo'),
         ('qoraqalpogiston', 'Qoraqalpog\'iston'),
-
+        ('tanlanmagan','Tanlanmagan')
     ]
     nomi = models.CharField(max_length=200)
     muallif = models.CharField(max_length=100)
@@ -38,7 +38,7 @@ class Kitob(models.Model):
     ega = models.ForeignKey(User,on_delete=models.CASCADE,related_name='books')
     mavjud = models.BooleanField(default=True)
     yaratildi = models.DateTimeField(auto_now_add=True)
-    hudud = models.CharField(max_length=20,choices=Hudud_tanlov,default='nomalum')
+    hudud = models.CharField(max_length=20,choices=Hudud_tanlov,default='tanlanmagan')
 
     def __str__(self):
         return f"{self.nomi} - {self.muallif}"

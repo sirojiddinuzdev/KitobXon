@@ -20,13 +20,36 @@
 
 <div class="container">
 
-    <!-- Profil ma'lumotlari -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <h4>👤 {{ request.user.username }}</h4>
-            <p class="text-muted mb-0">Ro'yxatdan o'tgan: {{ request.user.date_joined|date:"d.m.Y" }}</p>
-        </div>
+<!-- Profil ma'lumotlari -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h4>👤 {{ request.user.username }}</h4>
+        <p class="text-muted mb-2">Ro'yxatdan o'tgan: {{ request.user.date_joined|date:"d.m.Y" }}</p>
+        
+        <!-- Bog'lanish ma'lumotlari -->
+        {% if profil.telegram or profil.telefon or profil.instagram %}
+            <hr>
+            {% if profil.telegram %}
+                <p class="mb-1">📱 Telegram: <strong>{{ profil.telegram }}</strong></p>
+            {% endif %}
+            {% if profil.telefon %}
+                <p class="mb-1">📞 Telefon: <strong>{{ profil.telefon }}</strong></p>
+            {% endif %}
+            {% if profil.instagram %}
+                <p class="mb-1">📸 Instagram: <strong>{{ profil.instagram }}</strong></p>
+            {% endif %}
+        {% endif %}
+
+        <hr>
+        <!-- Tahrirlash formasi -->
+        <h6>✏️ Bog'lanish ma'lumotlarini tahrirlash</h6>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-dark btn-sm">Saqlash</button>
+        </form>
     </div>
+</div>
 
     <!-- Mening kitoblarim -->
     <div class="d-flex justify-content-between align-items-center mb-3">

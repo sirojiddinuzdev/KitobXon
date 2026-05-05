@@ -2,12 +2,24 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from books.models import Kitob, Almashitirish
+from books.models import Almashitirish
+from .models import Profil
+from .forms import ProfilForm
 
 # Create your views here.
 
 @login_required
 def profil(request):
+    profil,_ = Profil.objects.get_or_create(user = request.user)
+    # form = None
+    if request.method == "POST":
+        form = ProfilForm(request.POST,instance=profil)
+        if form.is_valid():
+            form.save()
+            return redirect('profil')
+    else:
+            form = ProfilForm(instance=profil)
+        
     mening_kitoblarim = request.user.books.all()
     kelgan_sorovlar = Almashitirish.objects.filter(
         kitob__ega = request.user,
@@ -17,7 +29,9 @@ def profil(request):
     context = {
         'mening_kitoblarim':mening_kitoblarim,
         'kelgan_sorovlar':kelgan_sorovlar,
-        'yuborilgan_sorovlar':yuborilgan_sorovlar
+        'yuborilgan_sorovlar':yuborilgan_sorovlar,
+        'form':form,
+        'profil':profil
     }
     return render(request,'accounts/profil.html',context)
 
@@ -26,6 +40,7 @@ def royhatdan_otish(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            Profil.objects.create(user=user)
             login(request,user)
             return redirect('kitoblar-royhati')
             

@@ -88,20 +88,22 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ kitob.nomi }}</h5>
                         <p class="text-muted">✍️ {{ kitob.muallif }}</p>
-                        <span class="badge bg-secondary">{{ kitob.janr }}</span>
-                        <span class="badge bg-info">📍 {{ kitob.hudud }}</span>
+                        <span class="badge bg-secondary">{{ kitob.get_janr_display }}</span>
+                        <span class="badge bg-info">📍 {{ kitob.get_hudud_display }}</span>
                         <p class="card-text mt-2">{{ kitob.tavsif }}</p>
                     </div>
                     <div class="card-footer text-muted d-flex justify-content-between align-items-center">
                         <span>👤 {{ kitob.ega.username }}</span>
-                        {% if request.user.is_authenticated %}
-                            {% if kitob.ega != request.user %}
+                        {% if kitob.ega != request.user %}
+                            {% if kitob.id in yuborilgan_kitob_idlar %}
+                                <span class="badge bg-warning">✅ Yuborildi</span>
+                            {% else %}
                                 <a href="{% url 'sorov-yuborish' kitob.id %}" class="btn btn-sm btn-outline-primary">
                                     📩 So'rov yuborish
                                 </a>
+                            {% endif %}
                             {% else %}
                                 <span class="badge bg-success">Sizning kitobingiz</span>
-                            {% endif %}
                         {% endif %}
                     </div>
                 </div>
