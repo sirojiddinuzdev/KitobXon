@@ -60,7 +60,7 @@ def sorov_yuborish(request,kitob_id):
 
 @login_required
 def sorov_qabul(request,sorov_id):
-    sorov = Almashitirish.objects.get(id=sorov_id)
+    sorov = get_object_or_404(Almashitirish,id=sorov_id)
 
     if sorov.kitob.ega == request.user:
         sorov.holat = "qabul"

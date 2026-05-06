@@ -68,8 +68,14 @@
                     <span class="text-muted"> → {{ sorov.kitob.nomi }}</span>
                 </div>
                 <div>
-                    <a href="{% url 'sorov-qabul' sorov.id %}" class="btn btn-success btn-sm me-1">✅ Qabul</a>
-                    <a href="{% url 'sorov-rad' sorov.id %}" class="btn btn-danger btn-sm">❌ Rad</a>
+                    {% if sorov.holat == 'kutilmoqda' %}
+                        <a href="{% url 'sorov-qabul' sorov.id %}" class="btn btn-success btn-sm me-1">✅ Qabul</a>
+                        <a href="{% url 'sorov-rad' sorov.id %}" class="btn btn-danger btn-sm">❌ Rad</a>
+                    {% elif sorov.holat == 'qabul' %}
+                        <span class="badge bg-success">✅ Qabul qilindi</span>
+                    {% else %}
+                        <span class="badge bg-danger">❌ Rad etildi</span>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -85,50 +91,45 @@
     {% if yuborilgan_sorovlar %}
         {% for sorov in yuborilgan_sorovlar %}
         <div class="card mb-2 shadow-sm">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <strong>{{ sorov.kitob.nomi }}</strong>
-                    <span class="text-muted"> — {{ sorov.kitob.ega.username }}</span>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ sorov.kitob.nomi }}</strong>
+                        <span class="text-muted"> — {{ sorov.kitob.ega.username }}</span>
+                    </div>
+                    <span class="badge 
+                        {% if sorov.holat == 'kutilmoqda' %}bg-warning
+                        {% elif sorov.holat == 'qabul' %}bg-success
+                        {% else %}bg-danger{% endif %}">
+                        {{ sorov.holat }}
+                    </span>
                 </div>
-                <span class="badge 
-                    {% if sorov.holat == 'kutilmoqda' %}bg-warning
-                    {% elif sorov.holat == 'qabul' %}bg-success
-                    {% else %}bg-danger{% endif %}">
-                    {{ sorov.holat }}
-                </span>
+
+                <!-- Qabul qilinsa bog'lanish ma'lumotlari -->
+                {% if sorov.holat == 'qabul' %}
+                <hr>
+                <p class="mb-1 text-success">✅ So'rovingiz qabul qilindi! Kitob egasi bilan bog'laning:</p>
+                {% if sorov.ega_profil %}
+                    {% if sorov.ega_profil.telegram %}
+                        <p class="mb-1">📱 Telegram: <strong>{{ sorov.ega_profil.telegram }}</strong></p>
+                    {% endif %}
+                    {% if sorov.ega_profil.telefon %}
+                        <p class="mb-1">📞 Telefon: <strong>{{ sorov.ega_profil.telefon }}</strong></p>
+                    {% endif %}
+                    {% if sorov.ega_profil.instagram %}
+                        <p class="mb-1">📸 Instagram: <strong>{{ sorov.ega_profil.instagram }}</strong></p>
+                    {% endif %}
+                {% else %}
+                        <p class="text-muted">Kitob egasi bog'lanish ma'lumotlarini qo'shmagan.</p>
+                {% endif %}
+                {% endif %}
+
             </div>
         </div>
         {% endfor %}
     {% else %}
         <p class="text-muted">Hozircha so'rov yubormagansiz.</p>
     {% endif %}
-</div>
-    <div class="row">
-        {% if mening_kitoblarim %}
-            {% for kitob in mening_kitoblarim %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ kitob.nomi }}</h5>
-                        <p class="text-muted">✍️ {{ kitob.muallif }}</p>
-                        <span class="badge bg-secondary">{{ kitob.janr }}</span>
-                        <p class="card-text mt-2">{{ kitob.tavsif }}</p>
-                    </div>
-                    <div class="card-footer">
-                        {% if kitob.mavjud %}
-                            <span class="badge bg-success">Mavjud</span>
-                        {% else %}
-                            <span class="badge bg-danger">Band</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-muted">Hozircha kitob qo'shmagansiz.</p>
-        {% endif %}
-    </div>
-
 </div>
 
 </body>

@@ -21,11 +21,17 @@ def profil(request):
             form = ProfilForm(instance=profil)
         
     mening_kitoblarim = request.user.books.all()
+
     kelgan_sorovlar = Almashitirish.objects.filter(
-        kitob__ega = request.user,
-        holat = 'kutilmoqda'
+        kitob__ega = request.user
     )
     yuborilgan_sorovlar = Almashitirish.objects.filter(yuboruvchi=request.user)
+
+    for sorov in yuborilgan_sorovlar:
+        try:
+            sorov.ega_profil = Profil.objects.get(user=sorov.kitob.ega)
+        except Profil.DoesNotExist:
+            sorov.ega_profil = None
     context = {
         'mening_kitoblarim':mening_kitoblarim,
         'kelgan_sorovlar':kelgan_sorovlar,
