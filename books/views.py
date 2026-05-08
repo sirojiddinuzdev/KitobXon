@@ -3,6 +3,7 @@ from .models import Kitob,Almashitirish
 from django.contrib.auth.decorators import login_required
 from .forms import KitobForm
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
 # Create your views here.
 
 def kitoblar_royhati(request):
@@ -68,6 +69,7 @@ def sorov_qabul(request,sorov_id):
 
         sorov.kitob.mavjud = False
         sorov.kitob.save()
+        messages.success(request,f"{sorov.yuboruvchi.username} ning sorovi qabul qilindi")
         
     return redirect('profil')
 
@@ -78,4 +80,6 @@ def sorov_rad(request,sorov_id):
     if sorov.kitob.ega==request.user:
         sorov.holat = 'rad'
         sorov.save()
-        return redirect('profil')
+        messages.warning(request,f"{sorov.yuboruvchi.username} ning sorovi rad etildi")
+        
+    return redirect('profil')
