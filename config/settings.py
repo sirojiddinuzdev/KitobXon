@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static',]
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@3vqwxe#8dfzyg3_7*#pdt@fhs0a#f030ai916k052eazu1yet'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -45,7 +46,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'books',
-    'accounts'
+    'accounts',
+
+    'rest_framework',
+    'drf_spectaculuar'
 ]
 
 MIDDLEWARE = [
@@ -59,6 +63,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS':'drf_spectacular.openapi.AutoSchema'}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'KitobXon API',
+    'DESCRIPTION': 'Kitob almashtirish platformasi API',
+    'VERSION': '1.0.0',
+}
 
 TEMPLATES = [
     {
