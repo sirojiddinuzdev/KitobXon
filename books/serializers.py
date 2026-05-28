@@ -13,4 +13,5 @@ class AlmashitirishSerializer(serializers.ModelSerializer):
     kitob = KitobSerializer()
 
     class Meta:
+        model = Almashitirish
         fields = ['id','kitob','yuboruvchi','holat','yaratildi']

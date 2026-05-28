@@ -4,6 +4,10 @@ from django.contrib.auth.decorators import login_required
 from .forms import KitobForm
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
+
+from rest_framework import generics, permissions
+from .serializers import KitobSerializer, AlmashitirishSerializer
+
 # Create your views here.
 
 def kitoblar_royhati(request):
@@ -84,8 +88,6 @@ def sorov_rad(request,sorov_id):
         
     return redirect('profil')
 ##################################################################
-from rest_framework import generics, permissions
-from .serializers import KitobSerializer, AlmashitirishSerializer
 
 class KitobListAPI(generics.ListAPIView):
     queryset = Kitob.objects.all()

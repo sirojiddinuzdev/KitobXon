@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'accounts',
 
     'rest_framework',
-    'drf_spectaculuar'
+    'drf_spectacular'
 ]
 
 MIDDLEWARE = [
