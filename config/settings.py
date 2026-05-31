@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'accounts',
 
     'rest_framework',
-    'drf_spectacular'
+    'drf_spectacular',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -99,10 +100,23 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB', 'kitobxon'),
+        'USER': os.environ.get('POSTGRES_USER', 'kitobxon_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'kitobxon_pass'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
+
+# celery
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+# Email sozlamalari
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # Password validation

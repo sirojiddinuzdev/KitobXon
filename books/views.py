@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import KitobForm
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
+from .tasks import sorov_qabul_email
 
 from rest_framework import generics, permissions
 from .serializers import KitobSerializer, AlmashitirishSerializer
@@ -73,6 +74,12 @@ def sorov_qabul(request,sorov_id):
 
         sorov.kitob.mavjud = False
         sorov.kitob.save()
+        if sorov.yuboruvchi.email:
+            sorov_qabul_email.delay(
+                yuboruvchi_email=sorov.yuboruvchi.email,
+                kitob_nomi = sorov.kitob.nomi,
+                ega_username = request.user.username)
+
         messages.success(request,f"{sorov.yuboruvchi.username} ning sorovi qabul qilindi")
         
     return redirect('profil')
