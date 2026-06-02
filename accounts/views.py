@@ -1,10 +1,10 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import login,logout,authenticate
-from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from books.models import Almashitirish
 from .models import Profil
-from .forms import ProfilForm
+from .forms import ProfilForm, RegisterForm
 
 # Create your views here.
 
@@ -43,16 +43,15 @@ def profil(request):
 
 def royhatdan_otish(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             Profil.objects.create(user=user)
             login(request,user)
             return redirect('kitoblar-royhati')
-            
     else:
-        form = UserCreationForm()
-    return render(request, 'accounts/register.html', {"form":form})
+        form = RegisterForm()
+    return render(request, 'accounts/register.html', {"form": form})
 
 def kirish(request):
     if request.method == 'POST':

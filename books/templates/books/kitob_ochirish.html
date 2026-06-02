@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Kitob qo'shish — KitobXon</title>
+    <title>Kitobni o'chirish — KitobXon</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -22,17 +22,13 @@
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-body p-4">
-                    <h4 class="mb-4">{% if tahrirlash %}✏️ Kitobni tahrirlash{% else %}📚 Kitob qo'shish{% endif %}</h4>
-                    <form method="POST" enctype="multipart/form-data">
+                    <h4 class="mb-4">Kitobni o'chirish</h4>
+                    <p class="mb-3">Siz <strong>{{ kitob.nomi }}</strong> kitobini o‘chirmoqchisiz. Bu amal qaytarilmaydi.</p>
+                    <form method="POST">
                         {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-dark w-100 mt-3">
-                            {% if tahrirlash %}Yangilash{% else %}Qo'shish{% endif %}
-                        </button>
+                        <button type="submit" class="btn btn-danger w-100">O'chirish</button>
                     </form>
-                    <a href="{% url 'profil' %}" class="btn btn-outline-secondary w-100 mt-2">
-                        Bekor qilish
-                    </a>
+                    <a href="{% url 'profil' %}" class="btn btn-outline-secondary w-100 mt-2">Bekor qilish</a>
                 </div>
             </div>
         </div>

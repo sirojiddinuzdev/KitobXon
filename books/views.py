@@ -12,7 +12,7 @@ from .serializers import KitobSerializer, AlmashitirishSerializer
 # Create your views here.
 
 def kitoblar_royhati(request):
-    kitoblar = Kitob.objects.all()
+    kitoblar = Kitob.objects.filter(mavjud=True)
     qidiruv = request.GET.get('q')
     if qidiruv:
         kitoblar = kitoblar.filter(nomi__icontains = qidiruv) | kitoblar.filter(muallif__icontains = qidiruv)
@@ -48,6 +48,28 @@ def kitob_qoshish(request):
     else:
         form = KitobForm()
     return render(request, 'books/kitob_qoshish.html', {'form':form})
+
+@login_required
+def kitob_tahrirlash(request, kitob_id):
+    kitob = get_object_or_404(Kitob, id=kitob_id, ega=request.user)
+    if request.method == 'POST':
+        form = KitobForm(request.POST, request.FILES, instance=kitob)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Kitob muvaffaqiyatli yangilandi.')
+            return redirect('profil')
+    else:
+        form = KitobForm(instance=kitob)
+    return render(request, 'books/kitob_qoshish.html', {'form': form, 'tahrirlash': True, 'kitob': kitob})
+
+@login_required
+def kitob_ochirish(request, kitob_id):
+    kitob = get_object_or_404(Kitob, id=kitob_id, ega=request.user)
+    if request.method == 'POST':
+        kitob.delete()
+        messages.success(request, 'Kitob o‘chirildi.')
+        return redirect('profil')
+    return render(request, 'books/kitob_ochirish.html', {'kitob': kitob})
 
 @login_required
 def sorov_yuborish(request,kitob_id):

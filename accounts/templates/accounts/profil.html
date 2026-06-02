@@ -61,10 +61,46 @@
 </div>
 
     <!-- Mening kitoblarim -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5>📚 Mening kitoblarim</h5>
-        <a href="{% url 'kitob-qoshish' %}" class="btn btn-outline-dark btn-sm">+ Kitob qo'shish</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h5 class="mb-1">📚 Mening kitoblarim</h5>
+        <p class="text-muted mb-0">Jami kitoblar: <strong>{{ mening_kitoblarim|length }}</strong></p>
     </div>
+    <a href="{% url 'kitob-qoshish' %}" class="btn btn-outline-dark btn-sm">+ Kitob qo'shish</a>
+</div>
+
+<div class="row">
+    {% if mening_kitoblarim %}
+        {% for kitob in mening_kitoblarim %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ kitob.nomi }}</h5>
+                    <p class="text-muted">✍️ {{ kitob.muallif }}</p>
+                    <span class="badge bg-secondary">{{ kitob.get_janr_display }}</span>
+                    <span class="badge bg-info">📍 {{ kitob.get_hudud_display }}</span>
+                    <p class="card-text mt-2">{{ kitob.tavsif }}</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <div>
+                        {% if kitob.mavjud %}
+                            <span class="badge bg-success">Mavjud</span>
+                        {% else %}
+                            <span class="badge bg-danger">Band</span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <a href="{% url 'kitob-tahrirlash' kitob.id %}" class="btn btn-outline-primary btn-sm me-1">Tahrirlash</a>
+                        <a href="{% url 'kitob-ochirish' kitob.id %}" class="btn btn-outline-danger btn-sm">O'chirish</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">Hozircha kitob qo'shmagansiz.</p>
+    {% endif %}
+</div>
 <!-- Kelgan so'rovlar -->
 <div class="mt-5">
     <h5>📬 Kelgan so'rovlar</h5>
