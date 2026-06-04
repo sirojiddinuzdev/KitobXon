@@ -36,7 +36,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['kitobhon.uz', 'www.kitobhon.uz', '13.60.55.127', 'localhost']
 
 
 # Application definition
