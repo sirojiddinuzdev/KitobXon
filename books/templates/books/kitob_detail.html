@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static kx_extras %}
 
 {% block title %}{{ kitob.nomi }} — KitobXon{% endblock %}
 
@@ -33,7 +33,16 @@
                     </div>
 
                     <h1 class="mb-1" style="font-size:1.8rem;">{{ kitob.nomi }}</h1>
-                    <p class="text-muted mb-3"><i class="bi bi-pen"></i> {{ kitob.muallif }}</p>
+                    <p class="text-muted mb-2"><i class="bi bi-pen"></i> {{ kitob.muallif }}</p>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="kx-stars" style="font-size:1.1rem;"><span class="fill" style="width: {{ ortacha_baho|yulduz_pct }}%"></span></span>
+                        {% if sharh_soni %}
+                            <span class="fw-semibold">{{ ortacha_baho|floatformat:1 }}</span>
+                            <a href="#sharhlar" class="text-muted small text-decoration-none">{{ sharh_soni }} ta sharh</a>
+                        {% else %}
+                            <span class="text-muted small">Hali sharh yo'q</span>
+                        {% endif %}
+                    </div>
 
                     {% if kitob.tavsif %}
                         <p class="mb-4" style="line-height:1.7;">{{ kitob.tavsif }}</p>
@@ -71,6 +80,74 @@
                         {% endif %}
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sharhlar -->
+    <div id="sharhlar" class="mt-5">
+        <h2 class="kx-section-title mb-3"><i class="bi bi-chat-square-text"></i> Sharhlar va baholar</h2>
+
+        <div class="row g-4">
+            <!-- Sharh qoldirish -->
+            <div class="col-lg-5">
+                {% if request.user.is_authenticated and request.user != kitob.ega %}
+                    <div class="kx-panel p-4">
+                        <h3 class="h6 mb-3">{% if foydalanuvchi_sharhi %}Sharhingizni yangilang{% else %}Sharh qoldiring{% endif %}</h3>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label d-block mb-1">Bahoyingiz</label>
+                                <div class="kx-rate">
+                                    {% for i in "54321" %}
+                                        <input type="radio" name="baho" id="baho{{ i }}" value="{{ i }}"
+                                            {% if foydalanuvchi_sharhi.baho|stringformat:'s' == i %}checked{% endif %}>
+                                        <label for="baho{{ i }}" title="{{ i }}"></label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="matn" class="form-control" rows="3" placeholder="Fikringizni yozing...">{{ foydalanuvchi_sharhi.matn|default:'' }}</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-grad w-100"><i class="bi bi-send me-1"></i>{% if foydalanuvchi_sharhi %}Yangilash{% else %}Yuborish{% endif %}</button>
+                        </form>
+                    </div>
+                {% elif not request.user.is_authenticated %}
+                    <div class="kx-panel p-4 text-center">
+                        <p class="text-muted mb-3">Sharh qoldirish uchun tizimga kiring.</p>
+                        <a href="{% url 'kirish' %}" class="btn btn-grad">Kirish</a>
+                    </div>
+                {% else %}
+                    <div class="kx-panel p-4 text-center text-muted">
+                        <i class="bi bi-info-circle"></i> O'z kitobingizga sharh qoldira olmaysiz.
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Sharhlar ro'yxati -->
+            <div class="col-lg-7">
+                {% if sharhlar %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for sharh in sharhlar %}
+                        <div class="kx-panel p-3">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="kx-avatar">{{ sharh.muallif.username|slice:":1"|upper }}</span>
+                                <div>
+                                    <div class="fw-semibold">{{ sharh.muallif.username }}</div>
+                                    <span class="kx-stars" style="font-size:.8rem;"><span class="fill" style="width: {{ sharh.baho|yulduz_pct }}%"></span></span>
+                                </div>
+                                <small class="text-muted ms-auto">{{ sharh.yaratildi|date:"d.m.Y" }}</small>
+                            </div>
+                            {% if sharh.matn %}<p class="mb-0 mt-1">{{ sharh.matn }}</p>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="kx-empty">
+                        <span class="emoji"><i class="bi bi-chat-square-text"></i></span>
+                        <p>Hali sharhlar yo'q. Birinchi bo'lib fikr bildiring!</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -36,7 +36,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['kitobhon.uz', 'www.kitobhon.uz', '13.60.55.127', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -118,6 +118,7 @@ CELERY_TASK_SERIALIZER = 'json'
 
 # Email sozlamalari
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'KitobXon <no-reply@kitobhon.uz>'
 
 
 # Password validation

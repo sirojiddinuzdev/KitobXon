@@ -75,3 +75,19 @@ class Sevimli(models.Model):
 
     def __str__(self):
         return f"{self.foydalanuvchi.username} ❤ {self.kitob.nomi}"
+
+
+class Sharh(models.Model):
+    BAHO_TANLOV = [(i, str(i)) for i in range(1, 6)]
+    kitob = models.ForeignKey(Kitob, on_delete=models.CASCADE, related_name='sharhlar')
+    muallif = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sharhlar')
+    baho = models.PositiveSmallIntegerField(choices=BAHO_TANLOV, default=5)
+    matn = models.TextField(blank=True)
+    yaratildi = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('kitob', 'muallif')
+        ordering = ['-yaratildi']
+
+    def __str__(self):
+        return f"{self.muallif.username} → {self.kitob.nomi} ({self.baho})"

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static kx_extras %}
 
 {% block title %}KitobXon — Mavjud kitoblar{% endblock %}
 
@@ -98,6 +98,12 @@
                             <span class="pill pill-genre">{{ kitob.get_janr_display }}</span>
                             <span class="pill pill-region"><i class="bi bi-geo-alt-fill"></i> {{ kitob.get_hudud_display }}</span>
                         </div>
+                        {% if kitob.sharh_soni %}
+                        <div class="d-flex align-items-center gap-1 mb-2">
+                            <span class="kx-stars"><span class="fill" style="width: {{ kitob.avg_baho|yulduz_pct }}%"></span></span>
+                            <small class="text-muted">{{ kitob.avg_baho|floatformat:1 }} ({{ kitob.sharh_soni }})</small>
+                        </div>
+                        {% endif %}
                         <p class="kx-card-text mb-3">{{ kitob.tavsif|default:''|truncatechars:90 }}</p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">

@@ -7,10 +7,11 @@
     <div class="row justify-content-center">
         <div class="col-md-7 col-lg-6">
             <div class="kx-panel fade-up">
-                <div class="kx-panel-head">
-                    <div style="font-size:2rem;"><i class="bi bi-book-half"></i></div>
-                    <h1 class="h4 mb-1 mt-2">KitobXon'ga qo'shiling</h1>
-                    <p class="mb-0 small" style="opacity:.9;">Kitob almashish platformasiga xush kelibsiz</p>
+                <div class="kx-panel-head light">
+                    {% load static %}
+                    <img src="{% static 'img/logo.png' %}" alt="KitobXon" class="kx-auth-logo">
+                    <h1 class="h5 mb-1 mt-3">KitobXon'ga qo'shiling</h1>
+                    <p class="mb-0 small auth-note">Kitob almashish platformasiga xush kelibsiz</p>
                 </div>
                 <div class="p-4 p-lg-5">
                     <form method="POST">

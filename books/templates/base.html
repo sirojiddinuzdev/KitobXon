@@ -22,13 +22,20 @@
 <nav class="kx-navbar">
     <div class="container py-2 d-flex justify-content-between align-items-center">
         <a class="kx-brand" href="{% url 'kitoblar-royhati' %}">
-            <i class="bi bi-book-half logo"></i> KitobXon
+            <img src="{% static 'img/logo-mark.png' %}" alt="KitobXon" class="kx-logo-mark">
+            <span class="kx-wordmark">KitobXon</span>
         </a>
 
         <div class="d-flex align-items-center gap-1 gap-md-2">
             {% if request.user.is_authenticated %}
                 <a href="{% url 'kitoblar-royhati' %}" class="kx-nav-link d-none d-sm-inline-flex"><i class="bi bi-house-door"></i> <span class="d-none d-md-inline">Bosh sahifa</span></a>
                 <a href="{% url 'sevimlilar' %}" class="kx-nav-link"><i class="bi bi-heart-fill text-danger"></i> <span class="d-none d-md-inline">Sevimlilar</span></a>
+                <a href="{% url 'bildirishnomalar' %}" class="kx-nav-link position-relative" title="Bildirishnomalar">
+                    <i class="bi bi-bell"></i>
+                    {% if oqilmagan_bildirishnomalar %}
+                        <span class="kx-badge-count">{{ oqilmagan_bildirishnomalar }}</span>
+                    {% endif %}
+                </a>
                 <a href="{% url 'profil' %}" class="kx-nav-link position-relative">
                     {% if nav_profil and nav_profil.avatar %}
                         <img src="{{ nav_profil.avatar.url }}" class="kx-avatar" alt="avatar">
@@ -66,7 +73,7 @@
 
 <footer class="kx-footer">
     <div class="container">
-        <p class="mb-1"><span class="kx-brand" style="font-size:1.05rem;"><i class="bi bi-book-half logo"></i> KitobXon</span></p>
+        <p class="mb-2"><img src="{% static 'img/logo.png' %}" alt="KitobXon" style="height:48px;width:auto;opacity:.9;"></p>
         <p class="mb-0">Kitob almashish va ulashish platformasi · {% now "Y" %}</p>
     </div>
 </footer>

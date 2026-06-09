@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Bildirishnomalar — KitobXon{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 760px;">
+
+    <h1 class="kx-section-title mb-4"><i class="bi bi-bell"></i> Bildirishnomalar</h1>
+
+    {% if bildirishnomalar %}
+        <div class="d-flex flex-column gap-2">
+            {% for b in bildirishnomalar %}
+            <a href="{{ b.havola|default:'#' }}" class="text-reset text-decoration-none">
+                <div class="kx-notif {% if not b.oqilgan %}yangi{% endif %}">
+                    <span class="kx-notif-ikon {{ b.turi }}">
+                        {% if b.turi == 'success' %}<i class="bi bi-check-lg"></i>
+                        {% elif b.turi == 'warning' %}<i class="bi bi-x-lg"></i>
+                        {% else %}<i class="bi bi-bell"></i>{% endif %}
+                    </span>
+                    <div class="flex-grow-1">
+                        <p class="mb-0">{{ b.matn }}</p>
+                        <small class="text-muted">{{ b.yaratildi|date:"d.m.Y H:i" }}</small>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="kx-empty fade-up">
+            <span class="emoji"><i class="bi bi-bell-slash"></i></span>
+            <h3 class="h5">Bildirishnomalar yo'q</h3>
+            <p>Yangi so'rov yoki sharh kelganda shu yerda ko'rinadi.</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
