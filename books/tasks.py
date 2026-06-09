@@ -14,7 +14,7 @@ Kitob egasi {ega_username} bilan bog\'laning.
 
 KitobXon jamoasi
         ''',
-        from_email='kitobxon@gmail.com',
+        from_email=None,  # DEFAULT_FROM_EMAIL (noreply) ishlatiladi
         recipient_list=[yuboruvchi_email],
         fail_silently=False,
     )
