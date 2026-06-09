@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+from django.contrib import messages
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -10,36 +11,48 @@ from .forms import ProfilForm, RegisterForm
 
 @login_required
 def profil(request):
-    profil,_ = Profil.objects.get_or_create(user = request.user)
-    # form = None
+    profil, _ = Profil.objects.get_or_create(user=request.user)
     if request.method == "POST":
-        form = ProfilForm(request.POST,instance=profil)
+        form = ProfilForm(request.POST, request.FILES, instance=profil)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Profil yangilandi.')
             return redirect('profil')
     else:
-            form = ProfilForm(instance=profil)
-        
+        form = ProfilForm(instance=profil)
+
     mening_kitoblarim = request.user.books.all()
 
     kelgan_sorovlar = Almashitirish.objects.filter(
-        kitob__ega = request.user
-    )
-    yuborilgan_sorovlar = Almashitirish.objects.filter(yuboruvchi=request.user)
+        kitob__ega=request.user
+    ).select_related('kitob', 'yuboruvchi')
+    yuborilgan_sorovlar = Almashitirish.objects.filter(
+        yuboruvchi=request.user
+    ).select_related('kitob', 'kitob__ega')
 
     for sorov in yuborilgan_sorovlar:
         try:
             sorov.ega_profil = Profil.objects.get(user=sorov.kitob.ega)
         except Profil.DoesNotExist:
             sorov.ega_profil = None
-    context = {
-        'mening_kitoblarim':mening_kitoblarim,
-        'kelgan_sorovlar':kelgan_sorovlar,
-        'yuborilgan_sorovlar':yuborilgan_sorovlar,
-        'form':form,
-        'profil':profil
+
+    # Statistika
+    statistika = {
+        'kitoblar': mening_kitoblarim.count(),
+        'kelgan': kelgan_sorovlar.count(),
+        'kutilayotgan': kelgan_sorovlar.filter(holat='kutilmoqda').count(),
+        'sevimlilar': request.user.sevimlilar.count(),
     }
-    return render(request,'accounts/profil.html',context)
+
+    context = {
+        'mening_kitoblarim': mening_kitoblarim,
+        'kelgan_sorovlar': kelgan_sorovlar,
+        'yuborilgan_sorovlar': yuborilgan_sorovlar,
+        'form': form,
+        'profil': profil,
+        'statistika': statistika,
+    }
+    return render(request, 'accounts/profil.html', context)
 
 def royhatdan_otish(request):
     if request.method == 'POST':

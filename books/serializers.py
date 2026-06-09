@@ -9,7 +9,7 @@ class KitobSerializer(serializers.ModelSerializer):
         fields = ['id','nomi','muallif','janr','hudud','tavsif','rasm','mavjud','ega','yaratildi']
 
 class AlmashitirishSerializer(serializers.ModelSerializer):
-    yuboruvchi = serializers.StringRelatedField
+    yuboruvchi = serializers.StringRelatedField()
     kitob = KitobSerializer()
 
     class Meta:

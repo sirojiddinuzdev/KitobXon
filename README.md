@@ -14,14 +14,19 @@ Kitob almashtirish uchun platforma. Foydalanuvchilar o'qib bo'lgan kitoblarini b
 
 ## Funksiyalar
 
-- Kitob qo'shish va ko'rish
-- Kitob qidirish
+- Kitob qo'shish, tahrirlash va o'chirish
+- Kitob detali sahifasi va o'xshash kitoblar tavsiyasi
+- Kitob qidirish (nom/muallif)
 - Janr va hudud bo'yicha filter
-- Kitob so'rovi yuborish
-- So'rovni qabul yoki rad qilish
-- Foydalanuvchi profili
-- Email xabarnoma
+- Sahifalash (pagination)
+- Sevimli kitoblar (favorites)
+- Kitob so'rovi yuborish, qabul yoki rad qilish
+- Kelgan so'rovlar uchun navbar bildirishnoma belgisi
+- Foydalanuvchi profili: avatar, bio va statistika paneli
+- Email xabarnoma (Celery)
 - REST API va Swagger
-- 
+- Zamonaviy, mobilga moslashgan dizayn
+
 ## Demo
-https://www.kitobhon.uz
+
+[https://www.kitobhon.uz](https://www.kitobhon.uz)

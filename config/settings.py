@@ -87,6 +87,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'accounts.context_processors.navbar_context',
             ],
         },
     },
@@ -141,13 +142,18 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'uz'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tashkent'
 
 USE_I18N = True
 
 USE_TZ = True
+
+# Auth redirects
+LOGIN_URL = 'kirish'
+LOGIN_REDIRECT_URL = 'kitoblar-royhati'
+LOGOUT_REDIRECT_URL = 'kirish'
 
 
 # Static files (CSS, JavaScript, Images)

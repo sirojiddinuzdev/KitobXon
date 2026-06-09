@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ kitob.nomi }} — KitobXon{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <a href="{% url 'kitoblar-royhati' %}" class="btn btn-soft btn-sm mb-3">← Orqaga</a>
+
+    <div class="kx-panel p-0 overflow-hidden fade-up">
+        <div class="row g-0">
+            <!-- Rasm -->
+            <div class="col-md-5 kx-card-img-wrap">
+                {% if kitob.rasm %}
+                    <img src="{{ kitob.rasm.url }}" class="w-100 h-100" style="object-fit:cover;min-height:340px;" alt="{{ kitob.nomi }}">
+                {% else %}
+                    <img src="{% static 'books/default_kitob.jpg' %}" class="w-100 h-100" style="object-fit:cover;min-height:340px;" alt="{{ kitob.nomi }}">
+                {% endif %}
+            </div>
+
+            <!-- Ma'lumot -->
+            <div class="col-md-7">
+                <div class="p-4 p-lg-5 h-100 d-flex flex-column">
+                    <div class="d-flex flex-wrap gap-1 mb-3">
+                        <span class="pill pill-genre">{{ kitob.get_janr_display }}</span>
+                        <span class="pill pill-region">📍 {{ kitob.get_hudud_display }}</span>
+                        {% if kitob.mavjud %}
+                            <span class="pill pill-ok">● Mavjud</span>
+                        {% else %}
+                            <span class="pill pill-busy">● Band</span>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="mb-1" style="font-size:1.8rem;">{{ kitob.nomi }}</h1>
+                    <p class="text-muted mb-3">✍️ {{ kitob.muallif }}</p>
+
+                    {% if kitob.tavsif %}
+                        <p class="mb-4" style="line-height:1.7;">{{ kitob.tavsif }}</p>
+                    {% else %}
+                        <p class="text-muted mb-4"><em>Tavsif kiritilmagan.</em></p>
+                    {% endif %}
+
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <span class="kx-avatar">{{ kitob.ega.username|slice:":1"|upper }}</span>
+                        <div>
+                            <div class="fw-semibold">{{ kitob.ega.username }}</div>
+                            <small class="text-muted">Kitob egasi · {{ kitob.yaratildi|date:"d.m.Y" }}</small>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto d-flex flex-wrap gap-2">
+                        {% if request.user.is_authenticated %}
+                            {% if kitob.ega == request.user %}
+                                <a href="{% url 'kitob-tahrirlash' kitob.id %}" class="btn btn-grad">✏️ Tahrirlash</a>
+                                <a href="{% url 'kitob-ochirish' kitob.id %}" class="btn btn-soft">🗑 O'chirish</a>
+                            {% else %}
+                                {% if not kitob.mavjud %}
+                                    <button class="btn btn-soft" disabled>Kitob band</button>
+                                {% elif sorov_yuborilgan %}
+                                    <button class="btn btn-soft" disabled>✅ So'rov yuborilgan</button>
+                                {% else %}
+                                    <a href="{% url 'sorov-yuborish' kitob.id %}?next={{ request.path|urlencode }}" class="btn btn-grad">📩 So'rov yuborish</a>
+                                {% endif %}
+                                <a href="{% url 'sevimli-toggle' kitob.id %}?next={{ request.path|urlencode }}" class="btn btn-soft">
+                                    {% if sevimli %}❤️ Sevimlilarda{% else %}🤍 Sevimliga qo'shish{% endif %}
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'kirish' %}" class="btn btn-grad">So'rov yuborish uchun kiring</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- O'xshash kitoblar -->
+    {% if oxshash %}
+    <h2 class="kx-section-title mt-5 mb-3">📚 O'xshash kitoblar</h2>
+    <div class="row g-4">
+        {% for k in oxshash %}
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="kx-card">
+                <div class="kx-card-img-wrap">
+                    <a href="{% url 'kitob-detail' k.id %}">
+                        {% if k.rasm %}
+                            <img src="{{ k.rasm.url }}" class="kx-card-img" alt="{{ k.nomi }}">
+                        {% else %}
+                            <img src="{% static 'books/default_kitob.jpg' %}" class="kx-card-img" alt="{{ k.nomi }}">
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'kitob-detail' k.id %}" class="text-reset"><h3 class="kx-card-title">{{ k.nomi }}</h3></a>
+                    <p class="kx-card-author mb-0">✍️ {{ k.muallif }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,43 +1,28 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <title>Kitob qo'shish — KitobXon</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+{% extends "base.html" %}
 
-<nav class="navbar navbar-dark bg-dark mb-4">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'kitoblar-royhati' %}">📚 KitobXon</a>
-        <div>
-            <a href="{% url 'profil' %}" class="btn btn-outline-light btn-sm me-2">👤 {{ request.user.username }}</a>
-            <a href="{% url 'chiqish' %}" class="btn btn-outline-light btn-sm">Chiqish</a>
-        </div>
-    </div>
-</nav>
+{% block title %}{% if tahrirlash %}Kitobni tahrirlash{% else %}Kitob qo'shish{% endif %} — KitobXon{% endblock %}
 
+{% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body p-4">
-                    <h4 class="mb-4">{% if tahrirlash %}✏️ Kitobni tahrirlash{% else %}📚 Kitob qo'shish{% endif %}</h4>
+        <div class="col-md-7 col-lg-6">
+            <div class="kx-panel fade-up">
+                <div class="kx-panel-head">
+                    <div style="font-size:2rem;">{% if tahrirlash %}✏️{% else %}📚{% endif %}</div>
+                    <h1 class="h4 mb-0 mt-2">{% if tahrirlash %}Kitobni tahrirlash{% else %}Yangi kitob qo'shish{% endif %}</h1>
+                </div>
+                <div class="p-4 p-lg-5">
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form.as_p }}
-                        <button type="submit" class="btn btn-dark w-100 mt-3">
-                            {% if tahrirlash %}Yangilash{% else %}Qo'shish{% endif %}
+                        <button type="submit" class="btn btn-grad w-100 py-2 mt-2">
+                            {% if tahrirlash %}Saqlash{% else %}Qo'shish{% endif %}
                         </button>
                     </form>
-                    <a href="{% url 'profil' %}" class="btn btn-outline-secondary w-100 mt-2">
-                        Bekor qilish
-                    </a>
+                    <a href="{% url 'profil' %}" class="btn btn-soft w-100 mt-2">Bekor qilish</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

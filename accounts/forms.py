@@ -68,8 +68,17 @@ class RegisterForm(UserCreationForm):
 class ProfilForm(forms.ModelForm):
     class Meta:
         model = Profil
-        fields = ['telefon', 'telegram', 'instagram']
+        fields = ['avatar', 'bio', 'telefon', 'telegram', 'instagram']
+        labels = {
+            'avatar': _('Profil rasmi'),
+            'bio': _('O‘zingiz haqingizda'),
+            'telefon': _('Telefon'),
+            'telegram': _('Telegram'),
+            'instagram': _('Instagram'),
+        }
         widgets = {
+            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Qisqacha o‘zingiz haqingizda...'}),
             'telefon': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+998 12 345 67 89'}),
             'telegram': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '@username'}),
             'instagram': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '@username'})
