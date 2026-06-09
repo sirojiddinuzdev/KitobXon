@@ -186,6 +186,9 @@ a { text-decoration: none; }
     display: flex; flex-direction: column;
 }
 .kx-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+/* Bootstrap .card-body paddingi --bs-card-spacer-* o'zgaruvchilariga bog'liq,
+   ular faqat .card da aniqlanadi. .kx-card uchun paddingni aniq beramiz. */
+.kx-card .card-body { padding: 1.15rem 1.2rem; }
 .kx-card-img {
     height: 210px; object-fit: cover; width: 100%;
     background: var(--grad-soft);
