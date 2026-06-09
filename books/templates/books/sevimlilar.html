@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container">
 
-    <h1 class="kx-section-title mb-4">❤️ Sevimli kitoblar</h1>
+    <h1 class="kx-section-title mb-4"><i class="bi bi-heart-fill text-danger"></i> Sevimli kitoblar</h1>
 
     {% if kitoblar %}
         <div class="row g-4">
@@ -21,17 +21,17 @@
                                 <img src="{% static 'books/default_kitob.jpg' %}" class="kx-card-img" alt="{{ kitob.nomi }}">
                             {% endif %}
                         </a>
-                        <a href="{% url 'sevimli-toggle' kitob.id %}?next={{ request.path|urlencode }}" class="kx-fav active" title="Olib tashlash">❤️</a>
+                        <a href="{% url 'sevimli-toggle' kitob.id %}?next={{ request.path|urlencode }}" class="kx-fav active" title="Olib tashlash"><i class="bi bi-heart-fill text-danger"></i></a>
                     </div>
                     <div class="card-body d-flex flex-column">
                         <a href="{% url 'kitob-detail' kitob.id %}" class="text-reset"><h3 class="kx-card-title">{{ kitob.nomi }}</h3></a>
-                        <p class="kx-card-author mb-2">✍️ {{ kitob.muallif }}</p>
+                        <p class="kx-card-author mb-2"><i class="bi bi-pen"></i> {{ kitob.muallif }}</p>
                         <div class="d-flex flex-wrap gap-1 mb-2">
                             <span class="pill pill-genre">{{ kitob.get_janr_display }}</span>
-                            <span class="pill pill-region">📍 {{ kitob.get_hudud_display }}</span>
+                            <span class="pill pill-region"><i class="bi bi-geo-alt-fill"></i> {{ kitob.get_hudud_display }}</span>
                         </div>
                         <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
-                            <span class="kx-card-author">👤 {{ kitob.ega.username }}</span>
+                            <span class="kx-card-author"><i class="bi bi-person-circle"></i> {{ kitob.ega.username }}</span>
                             {% if kitob.mavjud %}
                                 <span class="pill pill-ok">Mavjud</span>
                             {% else %}
@@ -45,9 +45,9 @@
         </div>
     {% else %}
         <div class="kx-empty fade-up">
-            <span class="emoji">💔</span>
+            <span class="emoji"><i class="bi bi-heartbreak"></i></span>
             <h3 class="h5">Sevimlilar bo'sh</h3>
-            <p>Yoqqan kitoblarni 🤍 belgisini bosib sevimlilarga qo'shing.</p>
+            <p>Yoqqan kitoblarni <i class="bi bi-heart"></i> belgisini bosib sevimlilarga qo'shing.</p>
             <a href="{% url 'kitoblar-royhati' %}" class="btn btn-grad">Kitoblarni ko'rish</a>
         </div>
     {% endif %}

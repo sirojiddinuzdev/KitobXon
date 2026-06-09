@@ -70,6 +70,8 @@ a { text-decoration: none; }
 }
 .kx-brand .logo {
     -webkit-text-fill-color: initial;
+    color: var(--violet);
+    font-size: 1.25rem;
     filter: drop-shadow(0 2px 4px rgba(124, 58, 237, .3));
 }
 .kx-nav-link {
