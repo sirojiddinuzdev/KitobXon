@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Kitob, Almashitirish, Sevimli, Sharh
+from .models import Kitob, Almashitirish, Sevimli, Sharh, Istak
 
 
 @admin.register(Kitob)
@@ -29,3 +29,10 @@ class SharhAdmin(admin.ModelAdmin):
     list_display = ('kitob', 'muallif', 'baho', 'yaratildi')
     list_filter = ('baho',)
     search_fields = ('kitob__nomi', 'muallif__username')
+
+
+@admin.register(Istak)
+class IstakAdmin(admin.ModelAdmin):
+    list_display = ('nomi', 'muallif', 'foydalanuvchi', 'topildi', 'yaratildi')
+    list_filter = ('topildi',)
+    search_fields = ('nomi', 'foydalanuvchi__username')

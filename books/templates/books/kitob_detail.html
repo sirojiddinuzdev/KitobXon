@@ -58,22 +58,39 @@
                         </div>
                     </div>
 
-                    <div class="mt-auto d-flex flex-wrap gap-2">
+                    <div class="mt-auto">
                         {% if request.user.is_authenticated %}
                             {% if kitob.ega == request.user %}
-                                <a href="{% url 'kitob-tahrirlash' kitob.id %}" class="btn btn-grad"><i class="bi bi-pencil-square me-1"></i>Tahrirlash</a>
-                                <a href="{% url 'kitob-ochirish' kitob.id %}" class="btn btn-soft"><i class="bi bi-trash me-1"></i>O'chirish</a>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{% url 'kitob-tahrirlash' kitob.id %}" class="btn btn-grad"><i class="bi bi-pencil-square me-1"></i>Tahrirlash</a>
+                                    <a href="{% url 'kitob-ochirish' kitob.id %}" class="btn btn-soft"><i class="bi bi-trash me-1"></i>O'chirish</a>
+                                </div>
                             {% else %}
-                                {% if not kitob.mavjud %}
-                                    <button class="btn btn-soft" disabled>Kitob band</button>
-                                {% elif sorov_yuborilgan %}
-                                    <button class="btn btn-soft" disabled><i class="bi bi-check-circle me-1"></i>So'rov yuborilgan</button>
-                                {% else %}
-                                    <a href="{% url 'sorov-yuborish' kitob.id %}?next={{ request.path|urlencode }}" class="btn btn-grad"><i class="bi bi-send me-1"></i>So'rov yuborish</a>
-                                {% endif %}
-                                <a href="{% url 'sevimli-toggle' kitob.id %}?next={{ request.path|urlencode }}" class="btn btn-soft">
-                                    {% if sevimli %}<i class="bi bi-heart-fill text-danger me-1"></i>Sevimlilarda{% else %}<i class="bi bi-heart me-1"></i>Sevimliga qo'shish{% endif %}
-                                </a>
+                                <form method="POST" action="{% url 'sorov-yuborish' kitob.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    {% if taklif_kitoblar and kitob.mavjud and not sorov_yuborilgan %}
+                                        <div class="mb-2">
+                                            <label class="form-label small mb-1"><i class="bi bi-arrow-left-right"></i> Almashtirishga o'z kitobingizni taklif qiling (ixtiyoriy):</label>
+                                            <select name="taklif_kitob" class="form-select form-select-sm">
+                                                <option value="">— Taklifsiz —</option>
+                                                {% for k in taklif_kitoblar %}<option value="{{ k.id }}">{{ k.nomi }}</option>{% endfor %}
+                                            </select>
+                                        </div>
+                                    {% endif %}
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% if not kitob.mavjud %}
+                                            <button class="btn btn-soft" type="button" disabled>Kitob band</button>
+                                        {% elif sorov_yuborilgan %}
+                                            <button class="btn btn-soft" type="button" disabled><i class="bi bi-check-circle me-1"></i>So'rov yuborilgan</button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-grad"><i class="bi bi-send me-1"></i>So'rov yuborish</button>
+                                        {% endif %}
+                                        <a href="{% url 'sevimli-toggle' kitob.id %}?next={{ request.path|urlencode }}" class="btn btn-soft">
+                                            {% if sevimli %}<i class="bi bi-heart-fill text-danger me-1"></i>Sevimlilarda{% else %}<i class="bi bi-heart me-1"></i>Sevimliga qo'shish{% endif %}
+                                        </a>
+                                    </div>
+                                </form>
                             {% endif %}
                         {% else %}
                             <a href="{% url 'kirish' %}" class="btn btn-grad">So'rov yuborish uchun kiring</a>

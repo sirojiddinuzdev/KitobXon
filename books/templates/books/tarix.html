@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Almashinuv tarixi — KitobXon{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="kx-section-title mb-4"><i class="bi bi-clock-history"></i> Almashinuv tarixi</h1>
+
+    <div class="row g-4">
+        <!-- Kelgan (hal qilingan) -->
+        <div class="col-lg-6">
+            <h2 class="h6 mb-3"><i class="bi bi-inbox"></i> Kelgan so'rovlar (arxiv)</h2>
+            {% if kelgan %}
+                <div class="d-flex flex-column gap-2">
+                    {% for sorov in kelgan %}
+                    <div class="kx-panel p-3 d-flex justify-content-between align-items-center gap-2">
+                        <div>
+                            <strong>{{ sorov.yuboruvchi.username }}</strong>
+                            <span class="text-muted"><i class="bi bi-arrow-right"></i> {{ sorov.kitob.nomi }}</span>
+                            {% if sorov.taklif_kitob %}<div class="small text-muted"><i class="bi bi-arrow-left-right"></i> {{ sorov.taklif_kitob.nomi }}</div>{% endif %}
+                            <div class="small text-muted">{{ sorov.yaratildi|date:"d.m.Y" }}</div>
+                        </div>
+                        {% if sorov.holat == 'qabul' %}
+                            <span class="pill pill-ok"><i class="bi bi-check-circle-fill"></i> Qabul</span>
+                        {% else %}
+                            <span class="pill pill-busy"><i class="bi bi-x-circle-fill"></i> Rad</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Arxivda yo'q.</p>
+            {% endif %}
+        </div>
+
+        <!-- Yuborilgan (hal qilingan) -->
+        <div class="col-lg-6">
+            <h2 class="h6 mb-3"><i class="bi bi-send"></i> Yuborilgan so'rovlar (arxiv)</h2>
+            {% if yuborilgan %}
+                <div class="d-flex flex-column gap-2">
+                    {% for sorov in yuborilgan %}
+                    <div class="kx-panel p-3 d-flex justify-content-between align-items-center gap-2">
+                        <div>
+                            <strong>{{ sorov.kitob.nomi }}</strong>
+                            <span class="text-muted">— {{ sorov.kitob.ega.username }}</span>
+                            {% if sorov.taklif_kitob %}<div class="small text-muted"><i class="bi bi-arrow-left-right"></i> {{ sorov.taklif_kitob.nomi }}</div>{% endif %}
+                            <div class="small text-muted">{{ sorov.yaratildi|date:"d.m.Y" }}</div>
+                        </div>
+                        {% if sorov.holat == 'qabul' %}
+                            <span class="pill pill-ok"><i class="bi bi-check-circle-fill"></i> Qabul</span>
+                        {% else %}
+                            <span class="pill pill-busy"><i class="bi bi-x-circle-fill"></i> Rad</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Arxivda yo'q.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

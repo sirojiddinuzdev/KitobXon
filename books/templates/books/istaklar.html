@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Izlayotgan kitoblarim — KitobXon{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <h1 class="kx-section-title"><i class="bi bi-search-heart"></i> Izlayotgan kitoblarim</h1>
+        <a href="{% url 'izlanayotgan' %}" class="btn btn-soft btn-sm"><i class="bi bi-people"></i> Hammaning izlovlari</a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Qo'shish formasi -->
+        <div class="col-lg-5">
+            <div class="kx-panel p-4">
+                <h2 class="h6 mb-3"><i class="bi bi-plus-circle"></i> Yangi izlov qo'shish</h2>
+                <p class="text-muted small">Izlagan kitobingiz qo'shilsa, sizga bildirishnoma keladi.</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-grad w-100"><i class="bi bi-plus-lg me-1"></i>Qo'shish</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Ro'yxat -->
+        <div class="col-lg-7">
+            {% if istaklar %}
+                <div class="d-flex flex-column gap-2">
+                    {% for istak in istaklar %}
+                    <div class="kx-panel p-3 d-flex justify-content-between align-items-center gap-2">
+                        <div>
+                            <strong>{{ istak.nomi }}</strong>
+                            {% if istak.muallif %}<span class="text-muted">— {{ istak.muallif }}</span>{% endif %}
+                            {% if istak.izoh %}<div class="small text-muted">{{ istak.izoh }}</div>{% endif %}
+                            {% if istak.topildi %}<span class="pill pill-ok mt-1"><i class="bi bi-check-circle-fill"></i> Topildi</span>{% endif %}
+                        </div>
+                        <a href="{% url 'istak-ochirish' istak.id %}" class="btn btn-soft btn-sm" title="O'chirish"><i class="bi bi-trash"></i></a>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="kx-empty">
+                    <span class="emoji"><i class="bi bi-search-heart"></i></span>
+                    <p>Hali izlov qo'shmagansiz. Qaysi kitobni izlayapsiz?</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -54,6 +54,11 @@ class Almashitirish(models.Model):
     ]
     kitob = models.ForeignKey(Kitob,on_delete=models.CASCADE,related_name='sorovlar')
     yuboruvchi = models.ForeignKey(User,on_delete=models.CASCADE,related_name='yuborilgan_sorovlar')
+    taklif_kitob = models.ForeignKey(
+        Kitob, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='taklif_qilingan',
+        help_text='Almashtirishga taklif qilingan kitob (ixtiyoriy)'
+    )
     holat = models.CharField(max_length=20,choices=HOLAT_CHANGES,default='kutilmoqda')
     yaratildi = models.DateTimeField(auto_now_add=True)
 
@@ -62,6 +67,22 @@ class Almashitirish(models.Model):
 
     def __str__(self):
         return f"{self.yuboruvchi} => {self.kitob}"
+
+
+class Istak(models.Model):
+    """Foydalanuvchi izlayotgan (wishlist) kitob."""
+    foydalanuvchi = models.ForeignKey(User, on_delete=models.CASCADE, related_name='istaklar')
+    nomi = models.CharField(max_length=200)
+    muallif = models.CharField(max_length=100, blank=True)
+    izoh = models.TextField(blank=True)
+    topildi = models.BooleanField(default=False)
+    yaratildi = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-yaratildi']
+
+    def __str__(self):
+        return f"{self.foydalanuvchi.username} izlayapti: {self.nomi}"
 
 
 class Sevimli(models.Model):

@@ -5,8 +5,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Avg, Count
 from django.urls import reverse
 
-from .models import Kitob, Almashitirish, Sevimli, Sharh
-from .forms import KitobForm
+from .models import Kitob, Almashitirish, Sevimli, Sharh, Istak
+from .forms import KitobForm, IstakForm
 from .tasks import sorov_qabul_email
 from accounts.utils import bildir
 
@@ -107,6 +107,7 @@ def kitob_detail(request, kitob_id):
     sorov_yuborilgan = False
     sevimli = False
     foydalanuvchi_sharhi = None
+    taklif_kitoblar = []
     if request.user.is_authenticated:
         sorov_yuborilgan = Almashitirish.objects.filter(
             kitob=kitob, yuboruvchi=request.user
@@ -115,6 +116,8 @@ def kitob_detail(request, kitob_id):
             foydalanuvchi=request.user, kitob=kitob
         ).exists()
         foydalanuvchi_sharhi = sharhlar.filter(muallif=request.user).first()
+        if request.user != kitob.ega:
+            taklif_kitoblar = request.user.books.filter(mavjud=True)
 
     oxshash = (
         Kitob.objects.filter(janr=kitob.janr, mavjud=True)
@@ -131,6 +134,7 @@ def kitob_detail(request, kitob_id):
         'ortacha_baho': ortacha_baho,
         'sharh_soni': sharh_soni,
         'foydalanuvchi_sharhi': foydalanuvchi_sharhi,
+        'taklif_kitoblar': taklif_kitoblar,
     }
     return render(request, 'books/kitob_detail.html', context)
 
@@ -143,6 +147,7 @@ def kitob_qoshish(request):
             kitob = form.save(commit=False)
             kitob.ega = request.user
             kitob.save()
+            _istak_mosligini_tekshir(kitob)
             messages.success(request, 'Kitob muvaffaqiyatli qo‘shildi.')
             return redirect('profil')
     else:
@@ -174,6 +179,23 @@ def kitob_ochirish(request, kitob_id):
     return render(request, 'books/kitob_ochirish.html', {'kitob': kitob})
 
 
+def _istak_mosligini_tekshir(yangi_kitob):
+    """Yangi kitob kimningdir wishlist'iga mos kelsa, egasiga bildirishnoma."""
+    nomi = yangi_kitob.nomi.lower()
+    istaklar = Istak.objects.filter(topildi=False).exclude(foydalanuvchi=yangi_kitob.ega)
+    for istak in istaklar:
+        iv = istak.nomi.lower().strip()
+        if iv and (iv in nomi or nomi in iv):
+            bildir(
+                istak.foydalanuvchi,
+                f'Siz izlagan "{istak.nomi}" kitobi qo‘shildi: "{yangi_kitob.nomi}"',
+                reverse('kitob-detail', args=[yangi_kitob.id]),
+                'success',
+            )
+            istak.topildi = True
+            istak.save(update_fields=['topildi'])
+
+
 @login_required
 def sorov_yuborish(request, kitob_id):
     kitob = get_object_or_404(Kitob, id=kitob_id)
@@ -186,21 +208,72 @@ def sorov_yuborish(request, kitob_id):
         messages.warning(request, 'Bu kitob hozircha band.')
         return redirect('kitoblar-royhati')
 
+    # Teskari taklif (ixtiyoriy): foydalanuvchi o'z kitobini almashtirishga taklif qiladi
+    taklif = None
+    taklif_id = request.POST.get('taklif_kitob') or request.GET.get('taklif_kitob')
+    if taklif_id:
+        taklif = Kitob.objects.filter(id=taklif_id, ega=request.user, mavjud=True).first()
+
     sorov, yaratildi = Almashitirish.objects.get_or_create(
-        kitob=kitob, yuboruvchi=request.user
+        kitob=kitob, yuboruvchi=request.user,
+        defaults={'taklif_kitob': taklif},
     )
     if yaratildi:
-        bildir(
-            kitob.ega,
-            f'{request.user.username} "{kitob.nomi}" kitobingizga so‘rov yubordi',
-            reverse('profil'),
-            'info',
-        )
+        matn = f'{request.user.username} "{kitob.nomi}" kitobingizga so‘rov yubordi'
+        if taklif:
+            matn += f' (almashtirishga: "{taklif.nomi}")'
+        bildir(kitob.ega, matn, reverse('profil'), 'info')
         messages.success(request, f'"{kitob.nomi}" uchun so‘rov yuborildi.')
     else:
         messages.info(request, 'Siz allaqachon so‘rov yuborgansiz.')
 
-    return redirect(request.GET.get('next') or 'kitoblar-royhati')
+    return redirect(request.POST.get('next') or request.GET.get('next') or 'kitoblar-royhati')
+
+
+@login_required
+def istaklar(request):
+    """Wishlist: izlanayotgan kitoblarni qo'shish/ko'rish."""
+    if request.method == 'POST':
+        form = IstakForm(request.POST)
+        if form.is_valid():
+            istak = form.save(commit=False)
+            istak.foydalanuvchi = request.user
+            istak.save()
+            messages.success(request, 'Izlanayotgan kitob qo‘shildi.')
+            return redirect('istaklar')
+    else:
+        form = IstakForm()
+    mening_istaklarim = request.user.istaklar.all()
+    return render(request, 'books/istaklar.html', {'form': form, 'istaklar': mening_istaklarim})
+
+
+@login_required
+def istak_ochirish(request, istak_id):
+    istak = get_object_or_404(Istak, id=istak_id, foydalanuvchi=request.user)
+    istak.delete()
+    messages.success(request, 'O‘chirildi.')
+    return redirect('istaklar')
+
+
+def izlanayotgan(request):
+    """Hammaga ochiq: foydalanuvchilar izlayotgan kitoblar ro'yxati."""
+    qidiruv = request.GET.get('q')
+    qs = Istak.objects.filter(topildi=False).select_related('foydalanuvchi')
+    if qidiruv:
+        qs = qs.filter(nomi__icontains=qidiruv)
+    return render(request, 'books/izlanayotgan.html', {'istaklar': qs, 'qidiruv': qidiruv})
+
+
+@login_required
+def tarix(request):
+    """Almashinuv tarixi/arxivi: hal qilingan (qabul/rad) so'rovlar."""
+    kelgan = Almashitirish.objects.filter(
+        kitob__ega=request.user, holat__in=['qabul', 'rad']
+    ).select_related('kitob', 'yuboruvchi', 'taklif_kitob')
+    yuborilgan = Almashitirish.objects.filter(
+        yuboruvchi=request.user, holat__in=['qabul', 'rad']
+    ).select_related('kitob', 'kitob__ega', 'taklif_kitob')
+    return render(request, 'books/tarix.html', {'kelgan': kelgan, 'yuborilgan': yuborilgan})
 
 
 @login_required

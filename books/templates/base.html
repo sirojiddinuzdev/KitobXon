@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>(function(){try{var t=localStorage.getItem('kx-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
     <meta name="description" content="KitobXon — kitob almashish va ulashish platformasi. O'qib bo'lgan kitoblaringizni boshqalar bilan almashing.">
     <title>{% block title %}KitobXon — Kitob almashish platformasi{% endblock %}</title>
 
@@ -26,9 +27,11 @@
         </a>
 
         <div class="d-flex align-items-center gap-1 gap-md-2">
+            <button type="button" id="themeToggle" class="kx-theme-btn" title="Rejimni almashtirish" aria-label="Tema"></button>
             {% if request.user.is_authenticated %}
                 <a href="{% url 'kitoblar-royhati' %}" class="kx-nav-link d-none d-sm-inline-flex"><i class="bi bi-house-door"></i> <span class="d-none d-md-inline">Bosh sahifa</span></a>
-                <a href="{% url 'sevimlilar' %}" class="kx-nav-link"><i class="bi bi-heart-fill text-danger"></i> <span class="d-none d-md-inline">Sevimlilar</span></a>
+                <a href="{% url 'sevimlilar' %}" class="kx-nav-link"><i class="bi bi-heart-fill text-danger"></i> <span class="d-none d-lg-inline">Sevimlilar</span></a>
+                <a href="{% url 'izlanayotgan' %}" class="kx-nav-link"><i class="bi bi-people"></i> <span class="d-none d-lg-inline">Izlanayotgan</span></a>
                 <a href="{% url 'bildirishnomalar' %}" class="kx-nav-link position-relative" title="Bildirishnomalar">
                     <i class="bi bi-bell"></i>
                     {% if oqilmagan_bildirishnomalar %}
@@ -78,6 +81,24 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function(){
+    var btn = document.getElementById('themeToggle');
+    if(!btn) return;
+    function render(){
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        btn.innerHTML = dark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-stars-fill"></i>';
+    }
+    render();
+    btn.addEventListener('click', function(){
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        var next = dark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('kx-theme', next); } catch(e){}
+        render();
+    });
+})();
+</script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>
