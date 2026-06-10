@@ -12,9 +12,4 @@ urlpatterns = [
     path('sorov/<int:kitob_id>/',views.sorov_yuborish,name='sorov-yuborish'),
     path('sorov/<int:sorov_id>/qabul/',views.sorov_qabul,name='sorov-qabul'),
     path('sorov/<int:sorov_id>/rad/',views.sorov_rad,name='sorov-rad'),
-
-    path('api/kitoblar/',views.KitobListAPI.as_view(),name='api-kitoblar'),
-    path('api/kitoblar/<int:pk>/',views.KitobDetailAPI.as_view(),name='api-kitoblar-detail'),
-    path('api/mening-kitoblarim/',views.MeningKitoblarimAPI.as_view(),name='api-mening-kitoblarim'),
-    path('api/sorovlar/',views.AlmashitirishListAPI.as_view(),name='api-sorovlar'),
 ]

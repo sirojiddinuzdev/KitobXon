@@ -5,3 +5,11 @@ __pycache__/
 db.sqlite3
 media/
 .env
+
+# Katta media / video fayllar (GitHub 100MB limiti)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.zip
+.venv_check/

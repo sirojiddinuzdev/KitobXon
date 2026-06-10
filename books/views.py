@@ -10,10 +10,8 @@ from .forms import KitobForm
 from .tasks import sorov_qabul_email
 from accounts.utils import bildir
 
-from rest_framework import generics, permissions
-from .serializers import KitobSerializer, AlmashitirishSerializer
-
 # Create your views here.
+# REST API endi books/api.py va config/urls.py da (DRF router).
 
 
 def kitoblar_royhati(request):
@@ -273,34 +271,3 @@ def sorov_rad(request, sorov_id):
         messages.warning(request, f"{sorov.yuboruvchi.username} ning so‘rovi rad etildi")
 
     return redirect('profil')
-
-
-##################################################################
-
-class KitobListAPI(generics.ListAPIView):
-    queryset = Kitob.objects.all()
-    serializer_class = KitobSerializer
-    permission_classes = [permissions.AllowAny]
-
-
-class KitobDetailAPI(generics.RetrieveAPIView):
-    queryset = Kitob.objects.all()
-    serializer_class = KitobSerializer
-    permission_classes = [permissions.AllowAny]
-
-
-class MeningKitoblarimAPI(generics.ListAPIView):
-    serializer_class = KitobSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Kitob.objects.filter(ega=self.request.user)
-
-
-class AlmashitirishListAPI(generics.ListAPIView):
-    serializer_class = AlmashitirishSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Almashitirish.objects.filter(yuboruvchi=self.request.user)
-##################################################################
