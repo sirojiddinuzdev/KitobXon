@@ -1,0 +1,600 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-10 23:27+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: accounts/forms.py:11
+msgid "Parol shaxsiy ma'lumotlaringizga juda o'xshamasligi kerak."
+msgstr "Password must not be too similar to your personal information."
+
+#: accounts/forms.py:12
+msgid "Parol kamida 8 ta belgidan iborat bo'lishi kerak."
+msgstr "Password must contain at least 8 characters."
+
+#: accounts/forms.py:13
+msgid "Parol keng tarqalgan parollardan biri bo'lmasligi kerak."
+msgstr "Password must not be a commonly used password."
+
+#: accounts/forms.py:14
+msgid "Parol faqat raqamlardan iborat bo'lmasligi kerak."
+msgstr "Password must not be entirely numeric."
+
+#: accounts/forms.py:20
+msgid "Email"
+msgstr "Email"
+
+#: accounts/forms.py:28 accounts/forms.py:83
+msgid "Foydalanuvchi nomi"
+msgstr "Username"
+
+#: accounts/forms.py:29 accounts/forms.py:85
+msgid "Parol"
+msgstr "Password"
+
+#: accounts/forms.py:30
+msgid "Parolni tasdiqlash"
+msgstr "Confirm password"
+
+#: accounts/forms.py:34
+msgid ""
+"Majburiy. 150 belgidan kam. Harflar, raqamlar va @/./+/-/_ belgilaridan "
+"foydalanishingiz mumkin."
+msgstr ""
+"Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+
+#: accounts/forms.py:36
+msgid "Oldingi parolni qayta kiriting."
+msgstr "Enter the same password again."
+
+#: accounts/forms.py:42
+msgid "Bu email allaqachon ro'yxatdan o'tgan."
+msgstr "This email is already registered."
+
+#: accounts/forms.py:94
+msgid "Profil rasmi"
+msgstr "Profile picture"
+
+#: accounts/forms.py:95
+msgid "O‘zingiz haqingizda"
+msgstr "About you"
+
+#: accounts/forms.py:96
+msgid "Telefon"
+msgstr "Phone"
+
+#: accounts/forms.py:97
+msgid "Telegram"
+msgstr "Telegram"
+
+#: accounts/forms.py:98
+msgid "Instagram"
+msgstr "Instagram"
+
+#: accounts/templates/accounts/bildirishnomalar.html:4
+#: accounts/templates/accounts/bildirishnomalar.html:9
+#: books/templates/base.html:57
+msgid "Bildirishnomalar"
+msgstr "Notifications"
+
+#: accounts/templates/accounts/bildirishnomalar.html:32
+msgid "Bildirishnomalar yo'q"
+msgstr "No notifications"
+
+#: accounts/templates/accounts/bildirishnomalar.html:33
+msgid "Yangi so'rov yoki sharh kelganda shu yerda ko'rinadi."
+msgstr "New requests and reviews will appear here."
+
+#: accounts/templates/accounts/login.html:4
+#: accounts/templates/accounts/login.html:23
+#: accounts/templates/accounts/register.html:24 books/templates/base.html:76
+#: books/templates/books/kitob_detail.html:135
+msgid "Kirish"
+msgstr "Sign in"
+
+#: accounts/templates/accounts/login.html:13
+msgid "Xush kelibsiz!"
+msgstr "Welcome!"
+
+#: accounts/templates/accounts/login.html:14
+msgid "Hisobingizga kiring"
+msgstr "Sign in to your account"
+
+#: accounts/templates/accounts/login.html:18
+msgid "Foydalanuvchi nomi yoki parol noto'g'ri."
+msgstr "Incorrect username or password."
+
+#: accounts/templates/accounts/login.html:26
+msgid "Parolni unutdingizmi?"
+msgstr "Forgot password?"
+
+#: accounts/templates/accounts/login.html:29
+msgid "Hisobingiz yo'qmi?"
+msgstr "Don't have an account?"
+
+#: accounts/templates/accounts/login.html:30
+#: accounts/templates/accounts/register.html:4 books/templates/base.html:77
+msgid "Ro'yxatdan o'tish"
+msgstr "Sign up"
+
+#: accounts/templates/accounts/profil.html:4
+msgid "Profil"
+msgstr "Profile"
+
+#: accounts/templates/accounts/profil.html:19
+msgid "Ro'yxatdan o'tgan:"
+msgstr "Joined:"
+
+#: accounts/templates/accounts/profil.html:27
+#: accounts/templates/accounts/profil.html:90
+#: books/templates/books/kitob_detail.html:65
+msgid "Tahrirlash"
+msgstr "Edit"
+
+#: accounts/templates/accounts/profil.html:33
+msgid "Profilni tahrirlash"
+msgstr "Edit profile"
+
+#: accounts/templates/accounts/profil.html:37
+#: books/templates/books/kitob_qoshish.html:20
+msgid "Saqlash"
+msgstr "Save"
+
+#: accounts/templates/accounts/profil.html:45
+msgid "Kitoblarim"
+msgstr "My books"
+
+#: accounts/templates/accounts/profil.html:48
+#: accounts/templates/accounts/profil.html:108
+msgid "Kelgan so'rovlar"
+msgstr "Incoming requests"
+
+#: accounts/templates/accounts/profil.html:51
+#: accounts/templates/accounts/profil.html:152
+msgid "Kutilmoqda"
+msgstr "Pending"
+
+#: accounts/templates/accounts/profil.html:54
+#: accounts/templates/accounts/profil.html:62 books/templates/base.html:55
+#: books/templates/books/kitoblar.html:87
+msgid "Sevimlilar"
+msgstr "Favorites"
+
+#: accounts/templates/accounts/profil.html:60
+msgid "Izlayotganlarim"
+msgstr "My wishlist"
+
+#: accounts/templates/accounts/profil.html:61
+#: books/templates/books/tarix.html:4 books/templates/books/tarix.html:8
+msgid "Almashinuv tarixi"
+msgstr "Exchange history"
+
+#: accounts/templates/accounts/profil.html:67
+msgid "Mening kitoblarim"
+msgstr "My books"
+
+#: accounts/templates/accounts/profil.html:68
+#: books/templates/books/kitob_qoshish.html:4
+#: books/templates/books/kitoblar.html:65
+msgid "Kitob qo'shish"
+msgstr "Add book"
+
+#: accounts/templates/accounts/profil.html:85
+#: books/templates/books/kitob_detail.html:29
+#: books/templates/books/sevimlilar.html:36
+msgid "Mavjud"
+msgstr "Available"
+
+#: accounts/templates/accounts/profil.html:87
+#: books/templates/books/kitob_detail.html:31
+#: books/templates/books/sevimlilar.html:38
+msgid "Band"
+msgstr "Reserved"
+
+#: accounts/templates/accounts/profil.html:91
+#: books/templates/books/istaklar.html:39
+#: books/templates/books/kitob_detail.html:66
+msgid "O'chirish"
+msgstr "Delete"
+
+#: accounts/templates/accounts/profil.html:102
+msgid "Hozircha kitob qo'shmagansiz."
+msgstr "You haven't added any books yet."
+
+#: accounts/templates/accounts/profil.html:103
+#: books/templates/books/kitoblar.html:156
+msgid "Birinchi kitobni qo'shing"
+msgstr "Add your first book"
+
+#: accounts/templates/accounts/profil.html:119
+msgid "Taklif:"
+msgstr "Offer:"
+
+#: accounts/templates/accounts/profil.html:125
+#: books/templates/books/tarix.html:25 books/templates/books/tarix.html:51
+msgid "Qabul"
+msgstr "Accept"
+
+#: accounts/templates/accounts/profil.html:126
+#: books/templates/books/tarix.html:27 books/templates/books/tarix.html:53
+msgid "Rad"
+msgstr "Decline"
+
+#: accounts/templates/accounts/profil.html:128
+#: accounts/templates/accounts/profil.html:154
+msgid "Qabul qilindi"
+msgstr "Accepted"
+
+#: accounts/templates/accounts/profil.html:130
+#: accounts/templates/accounts/profil.html:156
+msgid "Rad etildi"
+msgstr "Declined"
+
+#: accounts/templates/accounts/profil.html:137
+msgid "Hozircha so'rov yo'q."
+msgstr "No requests yet."
+
+#: accounts/templates/accounts/profil.html:141
+msgid "Yuborilgan so'rovlarim"
+msgstr "My sent requests"
+
+#: accounts/templates/accounts/profil.html:162
+msgid "So'rovingiz qabul qilindi! Kitob egasi bilan bog'laning:"
+msgstr "Your request was accepted! Contact the book owner:"
+
+#: accounts/templates/accounts/profil.html:169
+msgid "Bog'lanish ma'lumotlari kiritilmagan."
+msgstr "No contact details provided."
+
+#: accounts/templates/accounts/profil.html:173
+msgid "Kitob egasi bog'lanish ma'lumotlarini qo'shmagan."
+msgstr "The book owner hasn't added contact details."
+
+#: accounts/templates/accounts/profil.html:180
+msgid "Hozircha so'rov yubormagansiz."
+msgstr "You haven't sent any requests yet."
+
+#: accounts/templates/accounts/register.html:13
+msgid "KitobXon'ga qo'shiling"
+msgstr "Join KitobXon"
+
+#: accounts/templates/accounts/register.html:14
+msgid "Kitob almashish platformasiga xush kelibsiz"
+msgstr "Welcome to the book exchange platform"
+
+#: accounts/templates/accounts/register.html:20
+msgid "Hisob yaratish"
+msgstr "Create account"
+
+#: accounts/templates/accounts/register.html:23
+msgid "Allaqachon hisobingiz bormi?"
+msgstr "Already have an account?"
+
+#: books/templates/base.html:9
+msgid "KitobXon — kitob almashish va ulashish platformasi."
+msgstr "KitobXon — a book exchange platform."
+
+#: books/templates/base.html:10
+msgid "KitobXon — Kitob almashish platformasi"
+msgstr "KitobXon — Book exchange platform"
+
+#: books/templates/base.html:33
+msgid "Til"
+msgstr "Language"
+
+#: books/templates/base.html:52
+msgid "Rejimni almashtirish"
+msgstr "Toggle theme"
+
+#: books/templates/base.html:52
+msgid "Tema"
+msgstr "Theme"
+
+#: books/templates/base.html:54
+msgid "Bosh sahifa"
+msgstr "Home"
+
+#: books/templates/base.html:56
+msgid "Izlanayotgan"
+msgstr "Wanted"
+
+#: books/templates/base.html:74
+msgid "Chiqish"
+msgstr "Log out"
+
+#: books/templates/base.html:101
+msgid "Kitob almashish va ulashish platformasi"
+msgstr "Book exchange platform"
+
+#: books/templates/books/istaklar.html:4 books/templates/books/istaklar.html:9
+msgid "Izlayotgan kitoblarim"
+msgstr "Books I'm looking for"
+
+#: books/templates/books/istaklar.html:10
+msgid "Hammaning izlovlari"
+msgstr "Everyone's wishlist"
+
+#: books/templates/books/istaklar.html:17
+msgid "Yangi izlov qo'shish"
+msgstr "Add a wish"
+
+#: books/templates/books/istaklar.html:18
+msgid "Izlagan kitobingiz qo'shilsa, sizga bildirishnoma keladi."
+msgstr "You'll be notified when a matching book is added."
+
+#: books/templates/books/istaklar.html:22
+#: books/templates/books/kitob_qoshish.html:20
+msgid "Qo'shish"
+msgstr "Add"
+
+#: books/templates/books/istaklar.html:37
+msgid "Topildi"
+msgstr "Found"
+
+#: books/templates/books/istaklar.html:46
+msgid "Hali izlov qo'shmagansiz. Qaysi kitobni izlayapsiz?"
+msgstr "You haven't added any wishes yet. What book are you looking for?"
+
+#: books/templates/books/izlanayotgan.html:4
+#: books/templates/books/izlanayotgan.html:10
+msgid "Izlanayotgan kitoblar"
+msgstr "Wanted books"
+
+#: books/templates/books/izlanayotgan.html:11
+msgid "Foydalanuvchilar qidirayotgan kitoblar — sizda bo'lsa, ulashing!"
+msgstr "Books users are looking for — share if you have them!"
+
+#: books/templates/books/izlanayotgan.html:14
+msgid "Izlovim qo'shish"
+msgstr "Add a wish"
+
+#: books/templates/books/izlanayotgan.html:21
+msgid "Kitob nomi bo'yicha qidirish..."
+msgstr "Search by book title..."
+
+#: books/templates/books/izlanayotgan.html:22
+#: books/templates/books/kitoblar.html:44
+msgid "Qidirish"
+msgstr "Search"
+
+#: books/templates/books/izlanayotgan.html:36
+#, python-format
+msgid "%(u)s izlayapti"
+msgstr "%(u)s is looking"
+
+#: books/templates/books/kitob_detail.html:9
+msgid "Orqaga"
+msgstr "Back"
+
+#: books/templates/books/kitob_detail.html:41
+#, python-format
+msgid "%(sharh_soni)s ta sharh"
+msgstr "%(sharh_soni)s reviews"
+
+#: books/templates/books/kitob_detail.html:43
+msgid "Hali sharh yo'q"
+msgstr "No reviews yet"
+
+#: books/templates/books/kitob_detail.html:50
+msgid "Tavsif kiritilmagan."
+msgstr "No description provided."
+
+#: books/templates/books/kitob_detail.html:57
+msgid "Kitob egasi"
+msgstr "Book owner"
+
+#: books/templates/books/kitob_detail.html:74
+msgid "Almashtirishga o'z kitobingizni taklif qiling (ixtiyoriy):"
+msgstr "Offer your own book for exchange (optional):"
+
+#: books/templates/books/kitob_detail.html:76
+msgid "— Taklifsiz —"
+msgstr "— No offer —"
+
+#: books/templates/books/kitob_detail.html:83
+msgid "Kitob band"
+msgstr "Book reserved"
+
+#: books/templates/books/kitob_detail.html:85
+msgid "So'rov yuborilgan"
+msgstr "Request sent"
+
+#: books/templates/books/kitob_detail.html:87
+msgid "So'rov yuborish"
+msgstr "Send request"
+
+#: books/templates/books/kitob_detail.html:90
+msgid "Sevimlilarda"
+msgstr "In favorites"
+
+#: books/templates/books/kitob_detail.html:90
+msgid "Sevimliga qo'shish"
+msgstr "Add to favorites"
+
+#: books/templates/books/kitob_detail.html:96
+msgid "So'rov yuborish uchun kiring"
+msgstr "Sign in to send a request"
+
+#: books/templates/books/kitob_detail.html:106
+msgid "Sharhlar va baholar"
+msgstr "Reviews and ratings"
+
+#: books/templates/books/kitob_detail.html:113
+msgid "Sharhingizni yangilang"
+msgstr "Update your review"
+
+#: books/templates/books/kitob_detail.html:113
+msgid "Sharh qoldiring"
+msgstr "Leave a review"
+
+#: books/templates/books/kitob_detail.html:117
+msgid "Bahoyingiz"
+msgstr "Your rating"
+
+#: books/templates/books/kitob_detail.html:127
+msgid "Fikringizni yozing..."
+msgstr "Write your thoughts..."
+
+#: books/templates/books/kitob_detail.html:129
+msgid "Yangilash"
+msgstr "Update"
+
+#: books/templates/books/kitob_detail.html:129
+msgid "Yuborish"
+msgstr "Submit"
+
+#: books/templates/books/kitob_detail.html:134
+msgid "Sharh qoldirish uchun tizimga kiring."
+msgstr "Sign in to leave a review."
+
+#: books/templates/books/kitob_detail.html:139
+msgid "O'z kitobingizga sharh qoldira olmaysiz."
+msgstr "You can't review your own book."
+
+#: books/templates/books/kitob_detail.html:165
+msgid "Hali sharhlar yo'q. Birinchi bo'lib fikr bildiring!"
+msgstr "No reviews yet. Be the first!"
+
+#: books/templates/books/kitob_detail.html:174
+msgid "O'xshash kitoblar"
+msgstr "Similar books"
+
+#: books/templates/books/kitob_ochirish.html:4
+#: books/templates/books/kitob_ochirish.html:13
+msgid "Kitobni o'chirish"
+msgstr "Delete book"
+
+#: books/templates/books/kitob_ochirish.html:15
+#, python-format
+msgid ""
+"Siz <strong class=\"text-dark\">%(nomi)s</strong> kitobini o'chirmoqchisiz. "
+"Bu amal qaytarilmaydi."
+msgstr ""
+"You are about to delete <strong class=\"text-dark\">%(nomi)s</strong>. This "
+"action cannot be undone."
+
+#: books/templates/books/kitob_ochirish.html:19
+msgid "Ha, o'chirish"
+msgstr "Yes, delete"
+
+#: books/templates/books/kitob_ochirish.html:21
+#: books/templates/books/kitob_qoshish.html:23
+msgid "Bekor qilish"
+msgstr "Cancel"
+
+#: books/templates/books/kitob_qoshish.html:4
+#: books/templates/books/kitob_qoshish.html:13
+msgid "Kitobni tahrirlash"
+msgstr "Edit book"
+
+#: books/templates/books/kitob_qoshish.html:13
+msgid "Yangi kitob qo'shish"
+msgstr "Add a new book"
+
+#: books/templates/books/kitoblar.html:4
+msgid "KitobXon — Mavjud kitoblar"
+msgstr "KitobXon — Available books"
+
+#: books/templates/books/kitoblar.html:12
+msgid "Kitob almashish — oson va bepul"
+msgstr "Book exchange — easy and free"
+
+#: books/templates/books/kitoblar.html:13
+msgid ""
+"O'qib bo'lgan kitoblaringizni ulashing, yangilarini toping. Minglab "
+"kitobsevarlar jamoasiga qo'shiling."
+msgstr ""
+"Share the books you've read and find new ones. Join thousands of book "
+"lovers."
+
+#: books/templates/books/kitoblar.html:22
+msgid "Kitob nomi yoki muallif..."
+msgstr "Book title or author..."
+
+#: books/templates/books/kitoblar.html:27
+msgid "Barcha janrlar"
+msgstr "All genres"
+
+#: books/templates/books/kitoblar.html:35
+msgid "Barcha hududlar"
+msgstr "All regions"
+
+#: books/templates/books/kitoblar.html:54
+msgid "Mavjud kitoblar"
+msgstr "Available books"
+
+#: books/templates/books/kitoblar.html:55
+#, python-format
+msgid "%(jami)s ta kitob topildi"
+msgstr "%(jami)s books found"
+
+#: books/templates/books/kitoblar.html:62
+msgid "Tozalash"
+msgstr "Clear"
+
+#: books/templates/books/kitoblar.html:113
+msgid "Yuborildi"
+msgstr "Sent"
+
+#: books/templates/books/kitoblar.html:116
+msgid "So'rov"
+msgstr "Request"
+
+#: books/templates/books/kitoblar.html:119
+msgid "Sizniki"
+msgstr "Yours"
+
+#: books/templates/books/kitoblar.html:151
+msgid "Kitob topilmadi"
+msgstr "No books found"
+
+#: books/templates/books/kitoblar.html:152
+msgid "Boshqa kalit so'z yoki filtrlarni sinab ko'ring."
+msgstr "Try different keywords or filters."
+
+#: books/templates/books/kitoblar.html:154
+msgid "Barcha kitoblar"
+msgstr "All books"
+
+#: books/templates/books/sevimlilar.html:4
+#: books/templates/books/sevimlilar.html:9
+msgid "Sevimli kitoblar"
+msgstr "Favorite books"
+
+#: books/templates/books/sevimlilar.html:49
+msgid "Sevimlilar bo'sh"
+msgstr "Favorites are empty"
+
+#: books/templates/books/sevimlilar.html:50
+msgid "Yoqqan kitoblarni belgisini bosib sevimlilarga qo'shing."
+msgstr "Add books you like to favorites by clicking the heart."
+
+#: books/templates/books/sevimlilar.html:51
+msgid "Kitoblarni ko'rish"
+msgstr "Browse books"
+
+#: books/templates/books/tarix.html:13
+msgid "Kelgan so'rovlar (arxiv)"
+msgstr "Incoming requests (archive)"
+
+#: books/templates/books/tarix.html:33 books/templates/books/tarix.html:59
+msgid "Arxivda yo'q."
+msgstr "Nothing in the archive."
+
+#: books/templates/books/tarix.html:39
+msgid "Yuborilgan so'rovlar (arxiv)"
+msgstr "Sent requests (archive)"

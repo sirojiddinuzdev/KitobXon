@@ -31,6 +31,7 @@ api_urlpatterns = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
     path('books/', include('books.urls')),
     path('accounts/', include('accounts.urls')),
     path('', lambda request: redirect('kitoblar-royhati')),

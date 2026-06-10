@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load static i18n %}
 
-{% block title %}Ro'yxatdan o'tish — KitobXon{% endblock %}
+{% block title %}{% trans "Ro'yxatdan o'tish" %} — KitobXon{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,20 +9,19 @@
         <div class="col-md-7 col-lg-6">
             <div class="kx-panel fade-up">
                 <div class="kx-panel-head light">
-                    {% load static %}
                     <img src="{% static 'img/logo.png' %}" alt="KitobXon" class="kx-auth-logo">
-                    <h1 class="h5 mb-1 mt-3">KitobXon'ga qo'shiling</h1>
-                    <p class="mb-0 small auth-note">Kitob almashish platformasiga xush kelibsiz</p>
+                    <h1 class="h5 mb-1 mt-3">{% trans "KitobXon'ga qo'shiling" %}</h1>
+                    <p class="mb-0 small auth-note">{% trans "Kitob almashish platformasiga xush kelibsiz" %}</p>
                 </div>
                 <div class="p-4 p-lg-5">
                     <form method="POST">
                         {% csrf_token %}
                         {{ form.as_p }}
-                        <button type="submit" class="btn btn-grad w-100 py-2 mt-2">Hisob yaratish</button>
+                        <button type="submit" class="btn btn-grad w-100 py-2 mt-2">{% trans "Hisob yaratish" %}</button>
                     </form>
                     <p class="text-center mt-4 mb-0 text-muted">
-                        Allaqachon hisobingiz bormi?
-                        <a href="{% url 'kirish' %}" class="fw-semibold" style="color:var(--primary-dark);">Kirish</a>
+                        {% trans "Allaqachon hisobingiz bormi?" %}
+                        <a href="{% url 'kirish' %}" class="fw-semibold" style="color:var(--primary-dark);">{% trans "Kirish" %}</a>
                     </p>
                 </div>
             </div>

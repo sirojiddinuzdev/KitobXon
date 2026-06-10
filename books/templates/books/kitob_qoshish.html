@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}{% if tahrirlash %}Kitobni tahrirlash{% else %}Kitob qo'shish{% endif %} — KitobXon{% endblock %}
+{% block title %}{% if tahrirlash %}{% trans "Kitobni tahrirlash" %}{% else %}{% trans "Kitob qo'shish" %}{% endif %} — KitobXon{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -9,17 +10,17 @@
             <div class="kx-panel fade-up">
                 <div class="kx-panel-head">
                     <div style="font-size:2rem;"><i class="bi {% if tahrirlash %}bi-pencil-square{% else %}bi-journal-plus{% endif %}"></i></div>
-                    <h1 class="h4 mb-0 mt-2">{% if tahrirlash %}Kitobni tahrirlash{% else %}Yangi kitob qo'shish{% endif %}</h1>
+                    <h1 class="h4 mb-0 mt-2">{% if tahrirlash %}{% trans "Kitobni tahrirlash" %}{% else %}{% trans "Yangi kitob qo'shish" %}{% endif %}</h1>
                 </div>
                 <div class="p-4 p-lg-5">
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <button type="submit" class="btn btn-grad w-100 py-2 mt-2">
-                            {% if tahrirlash %}Saqlash{% else %}Qo'shish{% endif %}
+                            {% if tahrirlash %}{% trans "Saqlash" %}{% else %}{% trans "Qo'shish" %}{% endif %}
                         </button>
                     </form>
-                    <a href="{% url 'profil' %}" class="btn btn-soft w-100 mt-2">Bekor qilish</a>
+                    <a href="{% url 'profil' %}" class="btn btn-soft w-100 mt-2">{% trans "Bekor qilish" %}</a>
                 </div>
             </div>
         </div>

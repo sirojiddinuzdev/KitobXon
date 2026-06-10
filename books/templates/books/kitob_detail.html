@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load static kx_extras %}
+{% load static kx_extras i18n %}
 
 {% block title %}{{ kitob.nomi }} — KitobXon{% endblock %}
 
 {% block content %}
 <div class="container">
 
-    <a href="{% url 'kitoblar-royhati' %}" class="btn btn-soft btn-sm mb-3"><i class="bi bi-arrow-left me-1"></i>Orqaga</a>
+    <a href="{% url 'kitoblar-royhati' %}" class="btn btn-soft btn-sm mb-3"><i class="bi bi-arrow-left me-1"></i>{% trans "Orqaga" %}</a>
 
     <div class="kx-panel p-0 overflow-hidden fade-up">
         <div class="row g-0">
@@ -26,9 +26,9 @@
                         <span class="pill pill-genre">{{ kitob.get_janr_display }}</span>
                         <span class="pill pill-region"><i class="bi bi-geo-alt-fill"></i> {{ kitob.get_hudud_display }}</span>
                         {% if kitob.mavjud %}
-                            <span class="pill pill-ok"><i class="bi bi-circle-fill"></i> Mavjud</span>
+                            <span class="pill pill-ok"><i class="bi bi-circle-fill"></i> {% trans "Mavjud" %}</span>
                         {% else %}
-                            <span class="pill pill-busy"><i class="bi bi-circle-fill"></i> Band</span>
+                            <span class="pill pill-busy"><i class="bi bi-circle-fill"></i> {% trans "Band" %}</span>
                         {% endif %}
                     </div>
 
@@ -38,23 +38,23 @@
                         <span class="kx-stars" style="font-size:1.1rem;"><span class="fill" style="width: {{ ortacha_baho|yulduz_pct }}%"></span></span>
                         {% if sharh_soni %}
                             <span class="fw-semibold">{{ ortacha_baho|floatformat:1 }}</span>
-                            <a href="#sharhlar" class="text-muted small text-decoration-none">{{ sharh_soni }} ta sharh</a>
+                            <a href="#sharhlar" class="text-muted small text-decoration-none">{% blocktrans %}{{ sharh_soni }} ta sharh{% endblocktrans %}</a>
                         {% else %}
-                            <span class="text-muted small">Hali sharh yo'q</span>
+                            <span class="text-muted small">{% trans "Hali sharh yo'q" %}</span>
                         {% endif %}
                     </div>
 
                     {% if kitob.tavsif %}
                         <p class="mb-4" style="line-height:1.7;">{{ kitob.tavsif }}</p>
                     {% else %}
-                        <p class="text-muted mb-4"><em>Tavsif kiritilmagan.</em></p>
+                        <p class="text-muted mb-4"><em>{% trans "Tavsif kiritilmagan." %}</em></p>
                     {% endif %}
 
                     <div class="d-flex align-items-center gap-2 mb-4">
                         <span class="kx-avatar">{{ kitob.ega.username|slice:":1"|upper }}</span>
                         <div>
                             <div class="fw-semibold">{{ kitob.ega.username }}</div>
-                            <small class="text-muted">Kitob egasi · {{ kitob.yaratildi|date:"d.m.Y" }}</small>
+                            <small class="text-muted">{% trans "Kitob egasi" %} · {{ kitob.yaratildi|date:"d.m.Y" }}</small>
                         </div>
                     </div>
 
@@ -62,8 +62,8 @@
                         {% if request.user.is_authenticated %}
                             {% if kitob.ega == request.user %}
                                 <div class="d-flex flex-wrap gap-2">
-                                    <a href="{% url 'kitob-tahrirlash' kitob.id %}" class="btn btn-grad"><i class="bi bi-pencil-square me-1"></i>Tahrirlash</a>
-                                    <a href="{% url 'kitob-ochirish' kitob.id %}" class="btn btn-soft"><i class="bi bi-trash me-1"></i>O'chirish</a>
+                                    <a href="{% url 'kitob-tahrirlash' kitob.id %}" class="btn btn-grad"><i class="bi bi-pencil-square me-1"></i>{% trans "Tahrirlash" %}</a>
+                                    <a href="{% url 'kitob-ochirish' kitob.id %}" class="btn btn-soft"><i class="bi bi-trash me-1"></i>{% trans "O'chirish" %}</a>
                                 </div>
                             {% else %}
                                 <form method="POST" action="{% url 'sorov-yuborish' kitob.id %}">
@@ -71,29 +71,29 @@
                                     <input type="hidden" name="next" value="{{ request.path }}">
                                     {% if taklif_kitoblar and kitob.mavjud and not sorov_yuborilgan %}
                                         <div class="mb-2">
-                                            <label class="form-label small mb-1"><i class="bi bi-arrow-left-right"></i> Almashtirishga o'z kitobingizni taklif qiling (ixtiyoriy):</label>
+                                            <label class="form-label small mb-1"><i class="bi bi-arrow-left-right"></i> {% trans "Almashtirishga o'z kitobingizni taklif qiling (ixtiyoriy):" %}</label>
                                             <select name="taklif_kitob" class="form-select form-select-sm">
-                                                <option value="">— Taklifsiz —</option>
+                                                <option value="">{% trans "— Taklifsiz —" %}</option>
                                                 {% for k in taklif_kitoblar %}<option value="{{ k.id }}">{{ k.nomi }}</option>{% endfor %}
                                             </select>
                                         </div>
                                     {% endif %}
                                     <div class="d-flex flex-wrap gap-2">
                                         {% if not kitob.mavjud %}
-                                            <button class="btn btn-soft" type="button" disabled>Kitob band</button>
+                                            <button class="btn btn-soft" type="button" disabled>{% trans "Kitob band" %}</button>
                                         {% elif sorov_yuborilgan %}
-                                            <button class="btn btn-soft" type="button" disabled><i class="bi bi-check-circle me-1"></i>So'rov yuborilgan</button>
+                                            <button class="btn btn-soft" type="button" disabled><i class="bi bi-check-circle me-1"></i>{% trans "So'rov yuborilgan" %}</button>
                                         {% else %}
-                                            <button type="submit" class="btn btn-grad"><i class="bi bi-send me-1"></i>So'rov yuborish</button>
+                                            <button type="submit" class="btn btn-grad"><i class="bi bi-send me-1"></i>{% trans "So'rov yuborish" %}</button>
                                         {% endif %}
                                         <a href="{% url 'sevimli-toggle' kitob.id %}?next={{ request.path|urlencode }}" class="btn btn-soft">
-                                            {% if sevimli %}<i class="bi bi-heart-fill text-danger me-1"></i>Sevimlilarda{% else %}<i class="bi bi-heart me-1"></i>Sevimliga qo'shish{% endif %}
+                                            {% if sevimli %}<i class="bi bi-heart-fill text-danger me-1"></i>{% trans "Sevimlilarda" %}{% else %}<i class="bi bi-heart me-1"></i>{% trans "Sevimliga qo'shish" %}{% endif %}
                                         </a>
                                     </div>
                                 </form>
                             {% endif %}
                         {% else %}
-                            <a href="{% url 'kirish' %}" class="btn btn-grad">So'rov yuborish uchun kiring</a>
+                            <a href="{% url 'kirish' %}" class="btn btn-grad">{% trans "So'rov yuborish uchun kiring" %}</a>
                         {% endif %}
                     </div>
                 </div>
@@ -103,18 +103,18 @@
 
     <!-- Sharhlar -->
     <div id="sharhlar" class="mt-5">
-        <h2 class="kx-section-title mb-3"><i class="bi bi-chat-square-text"></i> Sharhlar va baholar</h2>
+        <h2 class="kx-section-title mb-3"><i class="bi bi-chat-square-text"></i> {% trans "Sharhlar va baholar" %}</h2>
 
         <div class="row g-4">
             <!-- Sharh qoldirish -->
             <div class="col-lg-5">
                 {% if request.user.is_authenticated and request.user != kitob.ega %}
                     <div class="kx-panel p-4">
-                        <h3 class="h6 mb-3">{% if foydalanuvchi_sharhi %}Sharhingizni yangilang{% else %}Sharh qoldiring{% endif %}</h3>
+                        <h3 class="h6 mb-3">{% if foydalanuvchi_sharhi %}{% trans "Sharhingizni yangilang" %}{% else %}{% trans "Sharh qoldiring" %}{% endif %}</h3>
                         <form method="POST">
                             {% csrf_token %}
                             <div class="mb-3">
-                                <label class="form-label d-block mb-1">Bahoyingiz</label>
+                                <label class="form-label d-block mb-1">{% trans "Bahoyingiz" %}</label>
                                 <div class="kx-rate">
                                     {% for i in "54321" %}
                                         <input type="radio" name="baho" id="baho{{ i }}" value="{{ i }}"
@@ -124,19 +124,19 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <textarea name="matn" class="form-control" rows="3" placeholder="Fikringizni yozing...">{{ foydalanuvchi_sharhi.matn|default:'' }}</textarea>
+                                <textarea name="matn" class="form-control" rows="3" placeholder="{% trans 'Fikringizni yozing...' %}">{{ foydalanuvchi_sharhi.matn|default:'' }}</textarea>
                             </div>
-                            <button type="submit" class="btn btn-grad w-100"><i class="bi bi-send me-1"></i>{% if foydalanuvchi_sharhi %}Yangilash{% else %}Yuborish{% endif %}</button>
+                            <button type="submit" class="btn btn-grad w-100"><i class="bi bi-send me-1"></i>{% if foydalanuvchi_sharhi %}{% trans "Yangilash" %}{% else %}{% trans "Yuborish" %}{% endif %}</button>
                         </form>
                     </div>
                 {% elif not request.user.is_authenticated %}
                     <div class="kx-panel p-4 text-center">
-                        <p class="text-muted mb-3">Sharh qoldirish uchun tizimga kiring.</p>
-                        <a href="{% url 'kirish' %}" class="btn btn-grad">Kirish</a>
+                        <p class="text-muted mb-3">{% trans "Sharh qoldirish uchun tizimga kiring." %}</p>
+                        <a href="{% url 'kirish' %}" class="btn btn-grad">{% trans "Kirish" %}</a>
                     </div>
                 {% else %}
                     <div class="kx-panel p-4 text-center text-muted">
-                        <i class="bi bi-info-circle"></i> O'z kitobingizga sharh qoldira olmaysiz.
+                        <i class="bi bi-info-circle"></i> {% trans "O'z kitobingizga sharh qoldira olmaysiz." %}
                     </div>
                 {% endif %}
             </div>
@@ -162,7 +162,7 @@
                 {% else %}
                     <div class="kx-empty">
                         <span class="emoji"><i class="bi bi-chat-square-text"></i></span>
-                        <p>Hali sharhlar yo'q. Birinchi bo'lib fikr bildiring!</p>
+                        <p>{% trans "Hali sharhlar yo'q. Birinchi bo'lib fikr bildiring!" %}</p>
                     </div>
                 {% endif %}
             </div>
@@ -171,7 +171,7 @@
 
     <!-- O'xshash kitoblar -->
     {% if oxshash %}
-    <h2 class="kx-section-title mt-5 mb-3"><i class="bi bi-journal-bookmark"></i> O'xshash kitoblar</h2>
+    <h2 class="kx-section-title mt-5 mb-3"><i class="bi bi-journal-bookmark"></i> {% trans "O'xshash kitoblar" %}</h2>
     <div class="row g-4">
         {% for k in oxshash %}
         <div class="col-12 col-sm-6 col-lg-4">

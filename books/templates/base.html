@@ -1,12 +1,13 @@
-{% load static %}
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>(function(){try{var t=localStorage.getItem('kx-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
-    <meta name="description" content="KitobXon — kitob almashish va ulashish platformasi. O'qib bo'lgan kitoblaringizni boshqalar bilan almashing.">
-    <title>{% block title %}KitobXon — Kitob almashish platformasi{% endblock %}</title>
+    <meta name="description" content="{% trans 'KitobXon — kitob almashish va ulashish platformasi.' %}">
+    <title>{% block title %}{% trans "KitobXon — Kitob almashish platformasi" %}{% endblock %}</title>
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%238b5cf6'><path d='M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z'/></svg>">
 
@@ -27,12 +28,33 @@
         </a>
 
         <div class="d-flex align-items-center gap-1 gap-md-2">
-            <button type="button" id="themeToggle" class="kx-theme-btn" title="Rejimni almashtirish" aria-label="Tema"></button>
+            <!-- Til almashtirgich -->
+            <div class="dropdown">
+                <button class="kx-theme-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{% trans 'Til' %}">
+                    <i class="bi bi-translate"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    {% get_available_languages as LANGUAGES %}
+                    {% for code, name in LANGUAGES %}
+                    <li>
+                        <form action="{% url 'set_language' %}" method="post" class="m-0">
+                            {% csrf_token %}
+                            <input type="hidden" name="language" value="{{ code }}">
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="dropdown-item {% if code == LANGUAGE_CODE %}fw-bold{% endif %}">
+                                {{ name }}{% if code == LANGUAGE_CODE %} <i class="bi bi-check2"></i>{% endif %}
+                            </button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <button type="button" id="themeToggle" class="kx-theme-btn" title="{% trans 'Rejimni almashtirish' %}" aria-label="{% trans 'Tema' %}"></button>
             {% if request.user.is_authenticated %}
-                <a href="{% url 'kitoblar-royhati' %}" class="kx-nav-link d-none d-sm-inline-flex"><i class="bi bi-house-door"></i> <span class="d-none d-md-inline">Bosh sahifa</span></a>
-                <a href="{% url 'sevimlilar' %}" class="kx-nav-link"><i class="bi bi-heart-fill text-danger"></i> <span class="d-none d-lg-inline">Sevimlilar</span></a>
-                <a href="{% url 'izlanayotgan' %}" class="kx-nav-link"><i class="bi bi-people"></i> <span class="d-none d-lg-inline">Izlanayotgan</span></a>
-                <a href="{% url 'bildirishnomalar' %}" class="kx-nav-link position-relative" title="Bildirishnomalar">
+                <a href="{% url 'kitoblar-royhati' %}" class="kx-nav-link d-none d-sm-inline-flex"><i class="bi bi-house-door"></i> <span class="d-none d-md-inline">{% trans "Bosh sahifa" %}</span></a>
+                <a href="{% url 'sevimlilar' %}" class="kx-nav-link"><i class="bi bi-heart-fill text-danger"></i> <span class="d-none d-lg-inline">{% trans "Sevimlilar" %}</span></a>
+                <a href="{% url 'izlanayotgan' %}" class="kx-nav-link"><i class="bi bi-people"></i> <span class="d-none d-lg-inline">{% trans "Izlanayotgan" %}</span></a>
+                <a href="{% url 'bildirishnomalar' %}" class="kx-nav-link position-relative" title="{% trans 'Bildirishnomalar' %}">
                     <i class="bi bi-bell"></i>
                     {% if oqilmagan_bildirishnomalar %}
                         <span class="kx-badge-count">{{ oqilmagan_bildirishnomalar }}</span>
@@ -49,10 +71,10 @@
                         <span class="kx-badge-count">{{ kutilayotgan_sorovlar }}</span>
                     {% endif %}
                 </a>
-                <a href="{% url 'chiqish' %}" class="btn btn-soft btn-sm">Chiqish</a>
+                <a href="{% url 'chiqish' %}" class="btn btn-soft btn-sm">{% trans "Chiqish" %}</a>
             {% else %}
-                <a href="{% url 'kirish' %}" class="btn btn-soft btn-sm">Kirish</a>
-                <a href="{% url 'royxatdan-otish' %}" class="btn btn-grad btn-sm">Ro'yxatdan o'tish</a>
+                <a href="{% url 'kirish' %}" class="btn btn-soft btn-sm">{% trans "Kirish" %}</a>
+                <a href="{% url 'royxatdan-otish' %}" class="btn btn-grad btn-sm">{% trans "Ro'yxatdan o'tish" %}</a>
             {% endif %}
         </div>
     </div>
@@ -76,7 +98,7 @@
 <footer class="kx-footer">
     <div class="container">
         <p class="mb-2"><img src="{% static 'img/logo.png' %}" alt="KitobXon" style="height:48px;width:auto;opacity:.9;"></p>
-        <p class="mb-0">Kitob almashish va ulashish platformasi · {% now "Y" %}</p>
+        <p class="mb-0">{% trans "Kitob almashish va ulashish platformasi" %} · {% now "Y" %}</p>
     </div>
 </footer>
 

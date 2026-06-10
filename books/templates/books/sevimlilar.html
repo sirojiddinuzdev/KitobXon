@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}Sevimli kitoblar — KitobXon{% endblock %}
+{% block title %}{% trans "Sevimli kitoblar" %} — KitobXon{% endblock %}
 
 {% block content %}
 <div class="container">
 
-    <h1 class="kx-section-title mb-4"><i class="bi bi-heart-fill text-danger"></i> Sevimli kitoblar</h1>
+    <h1 class="kx-section-title mb-4"><i class="bi bi-heart-fill text-danger"></i> {% trans "Sevimli kitoblar" %}</h1>
 
     {% if kitoblar %}
         <div class="row g-4">
@@ -33,9 +33,9 @@
                         <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
                             <span class="kx-card-author"><i class="bi bi-person-circle"></i> {{ kitob.ega.username }}</span>
                             {% if kitob.mavjud %}
-                                <span class="pill pill-ok">Mavjud</span>
+                                <span class="pill pill-ok">{% trans "Mavjud" %}</span>
                             {% else %}
-                                <span class="pill pill-busy">Band</span>
+                                <span class="pill pill-busy">{% trans "Band" %}</span>
                             {% endif %}
                         </div>
                     </div>
@@ -46,9 +46,9 @@
     {% else %}
         <div class="kx-empty fade-up">
             <span class="emoji"><i class="bi bi-heartbreak"></i></span>
-            <h3 class="h5">Sevimlilar bo'sh</h3>
-            <p>Yoqqan kitoblarni <i class="bi bi-heart"></i> belgisini bosib sevimlilarga qo'shing.</p>
-            <a href="{% url 'kitoblar-royhati' %}" class="btn btn-grad">Kitoblarni ko'rish</a>
+            <h3 class="h5">{% trans "Sevimlilar bo'sh" %}</h3>
+            <p>{% trans "Yoqqan kitoblarni belgisini bosib sevimlilarga qo'shing." %}</p>
+            <a href="{% url 'kitoblar-royhati' %}" class="btn btn-grad">{% trans "Kitoblarni ko'rish" %}</a>
         </div>
     {% endif %}
 

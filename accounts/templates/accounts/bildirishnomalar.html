@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Bildirishnomalar — KitobXon{% endblock %}
+{% block title %}{% trans "Bildirishnomalar" %} — KitobXon{% endblock %}
 
 {% block content %}
 <div class="container" style="max-width: 760px;">
 
-    <h1 class="kx-section-title mb-4"><i class="bi bi-bell"></i> Bildirishnomalar</h1>
+    <h1 class="kx-section-title mb-4"><i class="bi bi-bell"></i> {% trans "Bildirishnomalar" %}</h1>
 
     {% if bildirishnomalar %}
         <div class="d-flex flex-column gap-2">
@@ -28,8 +29,8 @@
     {% else %}
         <div class="kx-empty fade-up">
             <span class="emoji"><i class="bi bi-bell-slash"></i></span>
-            <h3 class="h5">Bildirishnomalar yo'q</h3>
-            <p>Yangi so'rov yoki sharh kelganda shu yerda ko'rinadi.</p>
+            <h3 class="h5">{% trans "Bildirishnomalar yo'q" %}</h3>
+            <p>{% trans "Yangi so'rov yoki sharh kelganda shu yerda ko'rinadi." %}</p>
         </div>
     {% endif %}
 
