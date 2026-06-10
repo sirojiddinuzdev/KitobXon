@@ -184,4 +184,12 @@ STATIC_URL = 'static/'
 CSRF_TRUSTED_ORIGINS = [
     'https://kitobhon.uz',
     'https://www.kitobhon.uz',
+    # ngrok (sinov uchun) — pastki domen har safar o'zgaradi
+    'https://*.ngrok-free.app',
+    'https://*.ngrok.io',
+    'https://*.ngrok.app',
 ]
+# .env orqali qo'shimcha origin'lar (vergul bilan ajratilgan)
+_extra_origins = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+if _extra_origins:
+    CSRF_TRUSTED_ORIGINS += [o.strip() for o in _extra_origins.split(',') if o.strip()]
