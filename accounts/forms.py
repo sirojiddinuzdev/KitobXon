@@ -104,3 +104,45 @@ class ProfilForm(forms.ModelForm):
             'telegram': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '@username'}),
             'instagram': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '@username'})
         }
+
+class TasdiqlashForm(forms.Form):
+    kod = forms.CharField(
+        max_length=6,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '6 xonali kodni kiriting'
+        })
+    )
+
+from django.contrib.auth.models import User
+
+class RoyxatForm(forms.ModelForm):
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Parol'})
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Parolni tasdiqlang'})
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError('Parollar mos kelmadi!')
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+        return user

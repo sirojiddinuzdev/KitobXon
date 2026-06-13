@@ -4,14 +4,36 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Profil, Bildirishnoma
+from .models import Profil, Bildirishnoma,TasdiqlashKodi
 from .serializers import (
-    ProfilSerializer, BildirishnomaSerializer, RegisterSerializer, UserSerializer,
+    ProfilSerializer, BildirishnomaSerializer, RegisterSerializer, UserSerializer,TasdiqlashSerializer
 )
+import random
+from django.core.mail import send_mail
 
+
+class TasdiqlashAPI(generics.GenericAPIView):
+    """Email tasdiqlash — user_id va kod yuboring."""
+    serializer_class = TasdiqlashSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        ser = self.get_serializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        tasdiqlash = ser.validated_data['tasdiqlash']
+        tasdiqlash.tasdiqlangan = True
+        tasdiqlash.save()
+        user = tasdiqlash.user
+        user.is_active = True
+        user.save()
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user': UserSerializer(user).data
+        })
 
 class RegisterAPI(generics.CreateAPIView):
-    """Ro'yxatdan o'tish — token qaytaradi."""
+    """Ro'yxatdan o'tish — email ga kod yuboradi."""
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -19,8 +41,26 @@ class RegisterAPI(generics.CreateAPIView):
         ser = self.get_serializer(data=request.data)
         ser.is_valid(raise_exception=True)
         user = ser.save()
-        token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'user': UserSerializer(user).data}, status=201)
+        
+        # Hali faol emas
+        user.is_active = False
+        user.save()
+
+        # Kod yaratish va yuborish
+        kod = str(random.randint(100000, 999999))
+        TasdiqlashKodi.objects.create(user=user, kod=kod)
+
+        send_mail(
+            subject='KitobXon — Tasdiqlash kodi',
+            message=f'Sizning tasdiqlash kodingiz: {kod}',
+            from_email='kitobxon@gmail.com',
+            recipient_list=[user.email],
+        )
+
+        return Response({
+            'user_id': user.id,
+            'message': 'Email ga tasdiqlash kodi yuborildi!'
+        }, status=201)
 
 
 class LoginAPI(ObtainAuthToken):

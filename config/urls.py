@@ -11,7 +11,7 @@ from rest_framework.routers import DefaultRouter
 
 from books.api import KitobViewSet, SorovViewSet, SevimliListAPI
 from accounts.api import (
-    RegisterAPI, LoginAPI, MeAPI, ProfilMeAPI, BildirishnomaViewSet,
+    RegisterAPI, LoginAPI, MeAPI, ProfilMeAPI, BildirishnomaViewSet,TasdiqlashAPI
 )
 
 # REST API router
@@ -22,6 +22,7 @@ router.register('bildirishnomalar', BildirishnomaViewSet, basename='api-bildiris
 
 api_urlpatterns = [
     path('auth/register/', RegisterAPI.as_view(), name='api-register'),
+    path('auth/tasdiqlash/', TasdiqlashAPI.as_view(), name='api-tasdiqlash'),
     path('auth/login/', LoginAPI.as_view(), name='api-login'),
     path('auth/me/', MeAPI.as_view(), name='api-me'),
     path('profil/', ProfilMeAPI.as_view(), name='api-profil'),

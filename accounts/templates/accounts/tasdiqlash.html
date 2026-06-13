@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Tasdiqlash" %} — KitobXon{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="kx-panel fade-up">
+                <div class="kx-panel-head light">
+                    <img src="{% static 'img/logo.png' %}" alt="KitobXon" class="kx-auth-logo">
+                    <h1 class="h5 mb-0 mt-3">{% trans "Emailni tasdiqlang" %}</h1>
+                    <p class="mb-0 small auth-note">{% trans "Emailingizga yuborilgan 6 xonali kodni kiriting" %}</p>
+                </div>
+                <div class="p-4 p-lg-5">
+                    {% if xato %}
+                        <div class="alert alert-danger py-2 small">{{ xato }}</div>
+                    {% endif %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-grad w-100 py-2 mt-2">{% trans "Tasdiqlash" %}</button>
+                    </form>
+                    <p class="text-center mt-3 mb-0 text-muted small">
+                        {% trans "Kod kelmadimi?" %}
+                        <a href="{% url 'royxatdan-otish' %}" class="fw-semibold" style="color:var(--primary-dark);">{% trans "Qayta urinish" %}</a>
+                    </p>
+                    <p class="text-center mt-2 mb-0 text-muted small">
+                        {% trans "Spam jildini tekshiring yoki to'g'ri email kiritganingizga ishonch hosil qiling." %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

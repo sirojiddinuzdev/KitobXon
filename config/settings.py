@@ -36,7 +36,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['kitobhon.uz', 'www.kitobhon.uz', '13.60.55.127', 'localhost','127.0.0.1']
 
 
 # Application definition
@@ -193,3 +193,14 @@ CSRF_TRUSTED_ORIGINS = [
 _extra_origins = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
 if _extra_origins:
     CSRF_TRUSTED_ORIGINS += [o.strip() for o in _extra_origins.split(',') if o.strip()]
+
+
+
+# EMAIL
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = 'KitobXon <ysirojiddin007@gmail.com>'

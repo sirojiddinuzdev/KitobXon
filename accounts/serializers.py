@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from .models import Profil, Bildirishnoma
+from .models import Profil, Bildirishnoma,TasdiqlashKodi
 
 
 class ProfilSerializer(serializers.ModelSerializer):
@@ -36,11 +36,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password']
         extra_kwargs = {'email': {'required': True}}
 
-    def validate_email(self, value):
-        if value and User.objects.filter(email__iexact=value).exists():
-            raise serializers.ValidationError("Bu email allaqachon ro'yxatdan o'tgan.")
-        return value
-
     def create(self, validated_data):
         user = User.objects.create_user(
             username=validated_data['username'],
@@ -49,3 +44,20 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         Profil.objects.get_or_create(user=user)
         return user
+    
+class TasdiqlashSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+    kod = serializers.CharField(max_length=6)
+
+    def validate(self, data):
+        try:
+            tasdiqlash = TasdiqlashKodi.objects.get(
+                user_id=data['user_id'],
+                kod=data['kod'],
+                tasdiqlangan=False
+            )
+            data['tasdiqlash'] = tasdiqlash
+        except TasdiqlashKodi.DoesNotExist:
+            raise serializers.ValidationError("Kod noto'g'ri yoki eskirgan!")
+        return data
+    

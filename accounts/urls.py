@@ -8,6 +8,7 @@ urlpatterns = [
     path('logout/', views.chiqish, name='chiqish'),
     path('profil/', views.profil, name='profil'),
     path('bildirishnomalar/', views.bildirishnomalar, name='bildirishnomalar'),
+    path('tasdiqlash/', views.tasdiqlash, name='tasdiqlash'),
 
     # Parolni tiklash (Django built-in)
     path('parol/tiklash/', auth_views.PasswordResetView.as_view(
