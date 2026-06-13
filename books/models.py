@@ -33,16 +33,19 @@ class Kitob(models.Model):
     nomi = models.CharField(max_length=200)
     muallif = models.CharField(max_length=100)
     tavsif = models.TextField(blank=True,null=True)
-    janr = models.CharField(max_length=20,choices=Janr_Tanlov,default='boshqa')
+    janr = models.CharField(max_length=20,choices=Janr_Tanlov,default='badiiy')
     rasm = models.ImageField(upload_to='books/',blank=True,null=True)
     ega = models.ForeignKey(User,on_delete=models.CASCADE,related_name='books')
     mavjud = models.BooleanField(default=True)
     yaratildi = models.DateTimeField(auto_now_add=True)
     hudud = models.CharField(max_length=20,choices=Hudud_tanlov,default='tanlanmagan')
 
+    class Meta:
+        ordering = ['-yaratildi']
+
     def __str__(self):
         return f"{self.nomi} - {self.muallif}"
-    
+
 class Almashitirish(models.Model):
     HOLAT_CHANGES = [
         ('kutilmoqda',"Kutilmoqda"),
@@ -51,8 +54,61 @@ class Almashitirish(models.Model):
     ]
     kitob = models.ForeignKey(Kitob,on_delete=models.CASCADE,related_name='sorovlar')
     yuboruvchi = models.ForeignKey(User,on_delete=models.CASCADE,related_name='yuborilgan_sorovlar')
+    taklif_kitob = models.ForeignKey(
+        Kitob, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='taklif_qilingan',
+        help_text='Almashtirishga taklif qilingan kitob (ixtiyoriy)'
+    )
     holat = models.CharField(max_length=20,choices=HOLAT_CHANGES,default='kutilmoqda')
     yaratildi = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-yaratildi']
+
     def __str__(self):
         return f"{self.yuboruvchi} => {self.kitob}"
+
+
+class Istak(models.Model):
+    """Foydalanuvchi izlayotgan (wishlist) kitob."""
+    foydalanuvchi = models.ForeignKey(User, on_delete=models.CASCADE, related_name='istaklar')
+    nomi = models.CharField(max_length=200)
+    muallif = models.CharField(max_length=100, blank=True)
+    izoh = models.TextField(blank=True)
+    topildi = models.BooleanField(default=False)
+    yaratildi = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-yaratildi']
+
+    def __str__(self):
+        return f"{self.foydalanuvchi.username} izlayapti: {self.nomi}"
+
+
+class Sevimli(models.Model):
+    foydalanuvchi = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sevimlilar')
+    kitob = models.ForeignKey(Kitob, on_delete=models.CASCADE, related_name='sevib_qolinganlar')
+    yaratildi = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('foydalanuvchi', 'kitob')
+        ordering = ['-yaratildi']
+
+    def __str__(self):
+        return f"{self.foydalanuvchi.username} ❤ {self.kitob.nomi}"
+
+
+class Sharh(models.Model):
+    BAHO_TANLOV = [(i, str(i)) for i in range(1, 6)]
+    kitob = models.ForeignKey(Kitob, on_delete=models.CASCADE, related_name='sharhlar')
+    muallif = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sharhlar')
+    baho = models.PositiveSmallIntegerField(choices=BAHO_TANLOV, default=5)
+    matn = models.TextField(blank=True)
+    yaratildi = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('kitob', 'muallif')
+        ordering = ['-yaratildi']
+
+    def __str__(self):
+        return f"{self.muallif.username} → {self.kitob.nomi} ({self.baho})"

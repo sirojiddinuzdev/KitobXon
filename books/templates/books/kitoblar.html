@@ -1,137 +1,162 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <title>KitobXon</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+{% extends "base.html" %}
+{% load static kx_extras i18n %}
 
-<nav class="navbar navbar-dark bg-dark mb-4">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'kitoblar-royhati' %}">📚 KitobXon</a>
-        <div>
-            {% if request.user.is_authenticated %}
-                <a href="{% url 'profil' %}" class="btn btn-outline-light btn-sm me-2">👤 {{ request.user.username }}</a>
-                <a href="{% url 'chiqish' %}" class="btn btn-outline-light btn-sm">Chiqish</a>
-            {% else %}
-                <a href="{% url 'kirish' %}" class="btn btn-outline-light btn-sm me-2">Kirish</a>
-                <a href="{% url 'royxatdan-otish' %}" class="btn btn-light btn-sm">Ro'yxatdan o'tish</a>
-            {% endif %}
-        </div>
-    </div>
-</nav>
+{% block title %}{% trans "KitobXon — Mavjud kitoblar" %}{% endblock %}
 
-<!-- Qidiruv va filterlash -->
-<div class="container mb-4">
-    <form method="GET" action="{% url 'kitoblar-royhati' %}">
-        <div class="row g-2">
-            <div class="col-md-3">
-                <input 
-                    type="text" 
-                    name="q" 
-                    class="form-control" 
-                    placeholder="Kitob nomi yoki muallif..."
-                    value="{{ qidiruv|default:'' }}"
-                >
-            </div>
-            <div class="col-md-3">
-                <select name="janr" class="form-select">
-                    <option value="">Barcha janrlar</option>
-                    <option value="badiiy" {% if janr == 'badiiy' %}selected{% endif %}>Badiiy</option>
-                    <option value="Selfhelp" {% if janr == 'Selfhelp' %}selected{% endif %}>Self Help</option>
-                    <option value="it" {% if janr == 'it' %}selected{% endif %}>IT</option>
-                    <option value="romantik" {% if janr == 'romantik' %}selected{% endif %}>Romantik</option>
-                    <option value="ilmiy_ommabop" {% if janr == 'ilmiy_ommabop' %}selected{% endif %}>Ilmiy-Ommabop</option>
-                    <option value="biznes_iqtisod" {% if janr == 'biznes_iqtisod' %}selected{% endif %}>Biznes-Iqtisod</option>
-                    <option value="psixologiya" {% if janr == 'psixologiya' %}selected{% endif %}>Psixologiya</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select name="hudud" class="form-select">
-                    <option value="">Barcha hududlar</option>
-                    <option value="toshkent" {% if hudud == 'toshkent' %}selected{% endif %}>Toshkent</option>
-                    <option value="samarkand" {% if hudud == 'samarkand' %}selected{% endif %}>Samarqand</option>
-                    <option value="buxoro" {% if hudud == 'buxoro' %}selected{% endif %}>Buxoro</option>
-                    <option value="andijon" {% if hudud == 'andijon' %}selected{% endif %}>Andijon</option>
-                    <option value="fargona" {% if hudud == 'fargona' %}selected{% endif %}>Farg'ona</option>
-                    <option value="namangan" {% if hudud == 'namangan' %}selected{% endif %}>Namangan</option>
-                    <option value="qashqadaryo" {% if hudud == 'qashqadaryo' %}selected{% endif %}>Qashqadaryo</option>
-                    <option value="surxondaryo" {% if hudud == 'surxondaryo' %}selected{% endif %}>Surxondaryo</option>
-                    <option value="xorazm" {% if hudud == 'xorazm' %}selected{% endif %}>Xorazm</option>
-                    <option value="navoiy" {% if hudud == 'navoiy' %}selected{% endif %}>Navoiy</option>
-                    <option value="jizzax" {% if hudud == 'jizzax' %}selected{% endif %}>Jizzax</option>
-                    <option value="sirdaryo" {% if hudud == 'sirdaryo' %}selected{% endif %}>Sirdaryo</option>
-                    <option value="qoraqalpogiston" {% if hudud == 'qoraqalpogiston' %}selected{% endif %}>Qoraqalpog'iston</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-dark w-100">🔍 Qidirish</button>
-            </div>
-        </div>
-    </form>
-</div>
-
+{% block content %}
 <div class="container">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+
+    <!-- Hero -->
+    <section class="kx-hero mb-4 fade-up">
+        <span class="kx-hero-emoji"><i class="bi bi-book-half"></i></span>
+        <h1>{% trans "Kitob almashish — oson va bepul" %}</h1>
+        <p>{% trans "O'qib bo'lgan kitoblaringizni ulashing, yangilarini toping. Minglab kitobsevarlar jamoasiga qo'shiling." %}</p>
+
+        <form method="GET" action="{% url 'kitoblar-royhati' %}" class="mt-4">
+            <div class="kx-search">
+                <div class="row g-2 align-items-center">
+                    <div class="col-12 col-md">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" name="q" class="form-control"
+                                   placeholder="{% trans 'Kitob nomi yoki muallif...' %}" value="{{ qidiruv|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-auto">
+                        <select name="janr" class="form-select">
+                            <option value="">{% trans "Barcha janrlar" %}</option>
+                            {% for kod, nom in janr_tanlov %}
+                                <option value="{{ kod }}" {% if janr == kod %}selected{% endif %}>{{ nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-auto">
+                        <select name="hudud" class="form-select">
+                            <option value="">{% trans "Barcha hududlar" %}</option>
+                            {% for kod, nom in hudud_tanlov %}
+                                {% if kod != 'tanlanmagan' %}
+                                    <option value="{{ kod }}" {% if hudud == kod %}selected{% endif %}>{{ nom }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-auto">
+                        <button type="submit" class="btn btn-grad w-100 px-4"><i class="bi bi-search me-1"></i>{% trans "Qidirish" %}</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <!-- Sarlavha va filtrlar -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
         <div>
-            <h4 class="mb-2 mb-md-0">Mavjud kitoblar</h4>
-            <p class="text-muted mb-0">Natija: <strong>{{ kitoblar|length }}</strong> ta kitob</p>
-            {% if qidiruv or janr or hudud %}
-                <p class="text-muted mb-0">
-                    Aktiv filtrlar:
-                    {% if qidiruv %}<span class="badge bg-secondary me-1">qidiruv: {{ qidiruv }}</span>{% endif %}
-                    {% if janr %}<span class="badge bg-secondary me-1">janr: {{ janr }}</span>{% endif %}
-                    {% if hudud %}<span class="badge bg-secondary me-1">hudud: {{ hudud }}</span>{% endif %}
-                </p>
-            {% endif %}
+            <h2 class="kx-section-title mb-1"><i class="bi bi-journal-bookmark"></i> {% trans "Mavjud kitoblar" %}</h2>
+            <p class="text-muted mb-0">{% blocktrans %}{{ jami }} ta kitob topildi{% endblocktrans %}</p>
         </div>
-        <div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            {% if qidiruv %}<span class="pill pill-genre"><i class="bi bi-search"></i> {{ qidiruv }}</span>{% endif %}
+            {% if janr %}<span class="pill pill-genre">{{ janr }}</span>{% endif %}
+            {% if hudud %}<span class="pill pill-region"><i class="bi bi-geo-alt-fill"></i> {{ hudud }}</span>{% endif %}
             {% if qidiruv or janr or hudud %}
-                <a href="{% url 'kitoblar-royhati' %}" class="btn btn-outline-secondary btn-sm">Filtrlarni tiklash</a>
+                <a href="{% url 'kitoblar-royhati' %}" class="btn btn-soft btn-sm"><i class="bi bi-x-lg me-1"></i>{% trans "Tozalash" %}</a>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'kitob-qoshish' %}" class="btn btn-grad btn-sm"><i class="bi bi-plus-lg me-1"></i>{% trans "Kitob qo'shish" %}</a>
             {% endif %}
         </div>
     </div>
-    <div class="row">
-        {% if kitoblar %}
+
+    <!-- Kitoblar -->
+    {% if kitoblar %}
+        <div class="row g-4">
             {% for kitob in kitoblar %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    {% if kitob.rasm %}
-                        <img src="{{ kitob.rasm.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
-                    {% else %}
-                        <img src="{% static 'books/default_kitob.jpg' %}" class="card-img-top" style="height: 200px; object-fit: cover;">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ kitob.nomi }}</h5>
-                        <p class="text-muted">✍️ {{ kitob.muallif }}</p>
-                        <span class="badge bg-secondary">{{ kitob.get_janr_display }}</span>
-                        <span class="badge bg-info">📍 {{ kitob.get_hudud_display }}</span>
-                        <p class="card-text mt-2">{{ kitob.tavsif }}</p>
-                    </div>
-                    <div class="card-footer text-muted d-flex justify-content-between align-items-center">
-                        <span>👤 {{ kitob.ega.username }}</span>
-                        {% if kitob.ega != request.user %}
-                            {% if kitob.id in yuborilgan_kitob_idlar %}
-                                <span class="badge bg-warning">✅ Yuborildi</span>
+            <div class="col-12 col-sm-6 col-lg-4 fade-up fade-up-{% cycle '1' '2' '3' %}">
+                <div class="kx-card">
+                    <div class="kx-card-img-wrap">
+                        <a href="{% url 'kitob-detail' kitob.id %}">
+                            {% if kitob.rasm %}
+                                <img src="{{ kitob.rasm.url }}" class="kx-card-img" alt="{{ kitob.nomi }}">
                             {% else %}
-                                <a href="{% url 'sorov-yuborish' kitob.id %}" class="btn btn-sm btn-outline-primary">
-                                    📩 So'rov yuborish
-                                </a>
+                                <img src="{% static 'books/default_kitob.jpg' %}" class="kx-card-img" alt="{{ kitob.nomi }}">
                             {% endif %}
-                            {% else %}
-                                <span class="badge bg-success">Sizning kitobingiz</span>
+                        </a>
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'sevimli-toggle' kitob.id %}?next={{ request.get_full_path|urlencode }}"
+                               class="kx-fav {% if kitob.id in sevimli_idlar %}active{% endif %}"
+                               title="{% trans 'Sevimlilar' %}">
+                                {% if kitob.id in sevimli_idlar %}<i class="bi bi-heart-fill text-danger"></i>{% else %}<i class="bi bi-heart"></i>{% endif %}
+                            </a>
                         {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <a href="{% url 'kitob-detail' kitob.id %}" class="text-reset">
+                            <h3 class="kx-card-title">{{ kitob.nomi }}</h3>
+                        </a>
+                        <p class="kx-card-author mb-2"><i class="bi bi-pen"></i> {{ kitob.muallif }}</p>
+                        <div class="d-flex flex-wrap gap-1 mb-2">
+                            <span class="pill pill-genre">{{ kitob.get_janr_display }}</span>
+                            <span class="pill pill-region"><i class="bi bi-geo-alt-fill"></i> {{ kitob.get_hudud_display }}</span>
+                        </div>
+                        {% if kitob.sharh_soni %}
+                        <div class="d-flex align-items-center gap-1 mb-2">
+                            <span class="kx-stars"><span class="fill" style="width: {{ kitob.avg_baho|yulduz_pct }}%"></span></span>
+                            <small class="text-muted">{{ kitob.avg_baho|floatformat:1 }} ({{ kitob.sharh_soni }})</small>
+                        </div>
+                        {% endif %}
+                        <p class="kx-card-text mb-3">{{ kitob.tavsif|default:''|truncatechars:90 }}</p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                            <span class="kx-card-author"><i class="bi bi-person-circle"></i> {{ kitob.ega.username }}</span>
+                            {% if kitob.ega != request.user %}
+                                {% if kitob.id in yuborilgan_kitob_idlar %}
+                                    <span class="pill pill-wait"><i class="bi bi-check-circle-fill"></i> {% trans "Yuborildi" %}</span>
+                                {% else %}
+                                    <a href="{% url 'sorov-yuborish' kitob.id %}?next={{ request.get_full_path|urlencode }}"
+                                       class="btn btn-grad btn-sm"><i class="bi bi-send me-1"></i>{% trans "So'rov" %}</a>
+                                {% endif %}
+                            {% else %}
+                                <span class="pill pill-mine">{% trans "Sizniki" %}</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
             {% endfor %}
-        {% else %}
-            <p>Hozircha kitob yo'q.</p>
-        {% endif %}
-    </div>
-</div>
+        </div>
 
-</body>
-</html>
+        <!-- Pagination -->
+        {% if kitoblar.paginator.num_pages > 1 %}
+        <nav class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if kitoblar.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?sahifa={{ kitoblar.previous_page_number }}{% if querystring %}&{{ querystring }}{% endif %}"><i class="bi bi-chevron-left"></i></a></li>
+                {% endif %}
+                {% for num in kitoblar.paginator.page_range %}
+                    {% if num == kitoblar.number %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num >= kitoblar.number|add:'-2' and num <= kitoblar.number|add:'2' %}
+                        <li class="page-item"><a class="page-link" href="?sahifa={{ num }}{% if querystring %}&{{ querystring }}{% endif %}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if kitoblar.has_next %}
+                    <li class="page-item"><a class="page-link" href="?sahifa={{ kitoblar.next_page_number }}{% if querystring %}&{{ querystring }}{% endif %}"><i class="bi bi-chevron-right"></i></a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="kx-empty fade-up">
+            <span class="emoji"><i class="bi bi-search"></i></span>
+            <h3 class="h5">{% trans "Kitob topilmadi" %}</h3>
+            <p>{% trans "Boshqa kalit so'z yoki filtrlarni sinab ko'ring." %}</p>
+            {% if qidiruv or janr or hudud %}
+                <a href="{% url 'kitoblar-royhati' %}" class="btn btn-soft">{% trans "Barcha kitoblar" %}</a>
+            {% elif request.user.is_authenticated %}
+                <a href="{% url 'kitob-qoshish' %}" class="btn btn-grad"><i class="bi bi-plus-lg me-1"></i>{% trans "Birinchi kitobni qo'shing" %}</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

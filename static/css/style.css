@@ -1,0 +1,479 @@
+/* ============================================================
+   KitobXon — Zamonaviy dizayn tizimi
+   ============================================================ */
+
+:root {
+    /* Logo (KITOBHON) palitrasi: binafsha -> ko'k -> turkuiz */
+    --primary: #6d28d9;
+    --primary-dark: #5b21b6;
+    --violet: #8b5cf6;
+    --teal: #14b8c4;
+    --navy: #203754;
+    --accent: #ec4899;
+    --grad: linear-gradient(135deg, #6d28d9 0%, #5b3fd6 35%, #2f7fc9 70%, #16b5bf 100%);
+    --grad-soft: linear-gradient(135deg, #f3eefe 0%, #e8fbf8 100%);
+    --grad-hero: linear-gradient(135deg, #5b21b6 0%, #4f46e5 28%, #2563eb 52%, #14b8c4 100%);
+
+    --bg: #cdd2e1;
+    --surface: #ffffff;
+    --text: #1e1b2e;
+    --muted: #6b7280;
+    --border: #ececf3;
+
+    --shadow-sm: 0 2px 8px rgba(31, 27, 46, .06);
+    --shadow: 0 10px 30px rgba(99, 40, 180, .10);
+    --shadow-lg: 0 20px 45px rgba(99, 40, 180, .18);
+
+    --radius: 18px;
+    --radius-sm: 12px;
+}
+
+* { -webkit-font-smoothing: antialiased; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    background-image:
+        radial-gradient(900px 500px at 100% -5%, rgba(20, 184, 196, .12), transparent 60%),
+        radial-gradient(800px 500px at -10% 0%, rgba(109, 40, 217, .11), transparent 55%);
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, .display-font {
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+
+a { text-decoration: none; }
+
+/* ---------- Navbar ---------- */
+.kx-navbar {
+    background: rgba(255, 255, 255, .75);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+.kx-brand {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 1.35rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    color: var(--navy);
+}
+.kx-brand .kx-wordmark {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.kx-logo-mark {
+    height: 60px;
+    width: auto;
+}
+.kx-auth-logo { max-width: 220px; width: 70%; height: auto; }
+.kx-nav-link {
+    color: var(--text);
+    font-weight: 600;
+    font-size: .92rem;
+    padding: .45rem .85rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    transition: all .18s ease;
+}
+.kx-nav-link:hover { background: var(--grad-soft); color: var(--primary-dark); }
+
+.kx-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--grad);
+    color: #fff; font-weight: 700; font-size: .9rem;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid #fff;
+}
+.kx-avatar-lg {
+    width: 84px; height: 84px; font-size: 2rem;
+    border: 3px solid #fff;
+    box-shadow: var(--shadow);
+}
+
+.kx-badge-count {
+    background: var(--accent);
+    color: #fff;
+    font-size: .68rem;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: .12rem .4rem;
+    position: relative;
+    top: -8px; left: -6px;
+    box-shadow: 0 2px 6px rgba(236, 72, 153, .5);
+}
+
+/* ---------- Buttons ---------- */
+.btn { border-radius: 999px; font-weight: 600; transition: all .18s ease; }
+.btn-grad {
+    background: var(--grad);
+    color: #fff;
+    border: none;
+    box-shadow: 0 6px 18px rgba(109, 40, 217, .32);
+}
+.btn-grad:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(20, 184, 196, .42);
+}
+.btn-soft {
+    background: var(--grad-soft);
+    color: var(--primary-dark);
+    border: 1px solid var(--border);
+}
+.btn-soft:hover { color: var(--primary-dark); border-color: var(--violet); transform: translateY(-1px); }
+.btn-outline-primary { border-color: var(--primary); color: var(--primary); }
+.btn-outline-primary:hover { background: var(--primary); border-color: var(--primary); }
+.btn-ghost-light {
+    color: #fff; border: 1px solid rgba(255,255,255,.4);
+}
+.btn-ghost-light:hover { color: #fff; background: rgba(255,255,255,.15); }
+
+/* ---------- Hero ---------- */
+.kx-hero {
+    background: var(--grad-hero);
+    border-radius: 28px;
+    color: #fff;
+    padding: 3rem 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+.kx-hero::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+        radial-gradient(400px 220px at 90% 10%, rgba(255,255,255,.18), transparent 60%),
+        radial-gradient(360px 240px at 8% 100%, rgba(255,255,255,.12), transparent 60%);
+    pointer-events: none;
+}
+.kx-hero h1 { font-size: clamp(1.8rem, 4vw, 2.7rem); margin-bottom: .6rem; }
+.kx-hero p { opacity: .92; font-size: 1.05rem; max-width: 560px; }
+.kx-hero-emoji { font-size: 2.4rem; }
+
+/* Hero search */
+.kx-search {
+    background: rgba(255,255,255,.95);
+    border-radius: var(--radius);
+    padding: .55rem;
+    box-shadow: var(--shadow);
+}
+.kx-search .form-control, .kx-search .form-select {
+    border: none; box-shadow: none; background: transparent;
+    font-weight: 500;
+}
+.kx-search .form-control:focus, .kx-search .form-select:focus { box-shadow: none; }
+
+/* ---------- Cards ---------- */
+.kx-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform .2s ease, box-shadow .2s ease;
+    height: 100%;
+    display: flex; flex-direction: column;
+}
+.kx-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+/* Bootstrap .card-body paddingi --bs-card-spacer-* o'zgaruvchilariga bog'liq,
+   ular faqat .card da aniqlanadi. .kx-card uchun paddingni aniq beramiz. */
+.kx-card .card-body { padding: 1.15rem 1.2rem; }
+.kx-card-img {
+    height: 210px; object-fit: cover; width: 100%;
+    background: var(--grad-soft);
+}
+.kx-card-img-wrap { position: relative; overflow: hidden; }
+.kx-card-img-wrap::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(30,27,46,.35), transparent 45%);
+}
+.kx-card:hover .kx-card-img { transform: scale(1.05); }
+.kx-card-img { transition: transform .4s ease; }
+.kx-card-title { font-size: 1.05rem; font-weight: 700; margin-bottom: .15rem; }
+.kx-card-author { color: var(--muted); font-size: .88rem; }
+.kx-card-text { color: var(--muted); font-size: .9rem; }
+
+/* ---------- Pills / badges ---------- */
+.pill {
+    display: inline-flex; align-items: center; gap: .25rem;
+    font-size: .74rem; font-weight: 600;
+    padding: .28rem .7rem; border-radius: 999px;
+    border: 1px solid var(--border);
+}
+.pill-genre { background: #f3eefe; color: #6d28d9; border-color: #e9defb; }
+.pill-region { background: #e6fbf8; color: #0e8a93; border-color: #c9f3ee; }
+.pill-ok { background: #ecfdf5; color: #059669; border-color: #d1fae5; }
+.pill-busy { background: #fef2f2; color: #dc2626; border-color: #fee2e2; }
+.pill-wait { background: #fffbeb; color: #d97706; border-color: #fef3c7; }
+.pill-mine { background: var(--grad-soft); color: var(--primary-dark); }
+
+/* ---------- Favorite heart ---------- */
+.kx-fav {
+    position: absolute; top: 12px; right: 12px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.9);
+    border: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform .15s ease, background .15s ease;
+    z-index: 2;
+}
+.kx-fav:hover { transform: scale(1.12); background: #fff; }
+.kx-fav.active { background: #fff0f6; }
+
+/* ---------- Stats ---------- */
+.kx-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+.kx-stat:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.kx-stat .num {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.9rem; font-weight: 800; line-height: 1;
+    background: var(--grad); -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.kx-stat .lbl { color: var(--muted); font-size: .82rem; font-weight: 600; margin-top: .25rem; }
+
+/* ---------- Yulduz reyting ---------- */
+.kx-stars {
+    display: inline-block;
+    position: relative;
+    font-family: 'bootstrap-icons';
+    font-size: .95rem;
+    line-height: 1;
+    color: #e3e6ee;
+    white-space: nowrap;
+    letter-spacing: 1px;
+}
+.kx-stars::before { content: "\F586\F586\F586\F586\F586"; } /* bi-star-fill x5 (fon) */
+.kx-stars .fill {
+    position: absolute; top: 0; left: 0;
+    overflow: hidden;
+    color: #f59e0b;
+    white-space: nowrap;
+}
+.kx-stars .fill::before { content: "\F586\F586\F586\F586\F586"; }
+
+/* Yulduzli baho kiritish (radio) */
+.kx-rate { display: inline-flex; flex-direction: row-reverse; gap: .15rem; }
+.kx-rate input { display: none; }
+.kx-rate label {
+    font-family: 'bootstrap-icons';
+    font-size: 1.7rem; color: #e3e6ee; cursor: pointer;
+    transition: transform .1s ease, color .1s ease;
+    margin: 0;
+}
+.kx-rate label::before { content: "\F588"; } /* bi-star (bo'sh) */
+.kx-rate input:checked ~ label,
+.kx-rate label:hover,
+.kx-rate label:hover ~ label { color: #f59e0b; }
+.kx-rate label:hover::before,
+.kx-rate input:checked ~ label::before { content: "\F586"; } /* to'la */
+.kx-rate label:hover { transform: scale(1.12); }
+
+/* ---------- Bildirishnomalar ---------- */
+.kx-notif {
+    display: flex; align-items: flex-start; gap: .85rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: .9rem 1rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform .15s ease;
+}
+.kx-notif:hover { transform: translateX(3px); }
+.kx-notif.yangi { border-left: 4px solid var(--primary); background: #faf8ff; }
+.kx-notif-ikon {
+    width: 38px; height: 38px; flex: 0 0 38px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.05rem;
+}
+.kx-notif-ikon.info { background: #f3eefe; color: var(--primary); }
+.kx-notif-ikon.success { background: #ecfdf5; color: #059669; }
+.kx-notif-ikon.warning { background: #fef2f2; color: #dc2626; }
+
+/* ---------- Section headings ---------- */
+.kx-section-title {
+    font-size: 1.25rem; font-weight: 700;
+    display: flex; align-items: center; gap: .5rem;
+}
+
+/* ---------- Empty state ---------- */
+.kx-empty {
+    text-align: center;
+    padding: 3.5rem 1rem;
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+}
+.kx-empty .emoji { font-size: 3rem; display: block; margin-bottom: .5rem; }
+.kx-empty p { color: var(--muted); }
+
+/* ---------- Panels / cards (forms) ---------- */
+.kx-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+.kx-panel-head {
+    background: var(--grad-hero);
+    color: #fff;
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 1.6rem;
+    text-align: center;
+}
+.kx-panel-head.light {
+    background: #fff;
+    color: var(--navy);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.2rem;
+}
+.kx-panel-head.light .auth-note { color: var(--muted); }
+
+/* ---------- Forms ---------- */
+.form-control, .form-select {
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    padding: .6rem .85rem;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--violet);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, .12);
+}
+label, .form-label { font-weight: 600; font-size: .9rem; margin-bottom: .25rem; }
+/* form.as_p uyg'unligi */
+form p { margin-bottom: 1rem; }
+.helptext, .form-text { font-size: .78rem; color: var(--muted); }
+.errorlist {
+    list-style: none; padding: 0; margin: .35rem 0 0;
+    color: #dc2626; font-size: .82rem; font-weight: 500;
+}
+
+/* ---------- Pagination ---------- */
+.pagination { gap: .35rem; }
+.page-link {
+    border: 1px solid var(--border);
+    border-radius: 10px !important;
+    color: var(--primary-dark);
+    font-weight: 600;
+    margin: 0 .1rem;
+}
+.page-item.active .page-link { background: var(--grad); border: none; color: #fff; }
+.page-link:hover { background: var(--grad-soft); color: var(--primary-dark); }
+
+/* ---------- Alerts ---------- */
+.alert {
+    border: none; border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    font-weight: 500;
+}
+
+/* ---------- Footer ---------- */
+.kx-footer {
+    color: var(--muted);
+    font-size: .85rem;
+    padding: 2.5rem 0 2rem;
+    text-align: center;
+}
+.kx-footer a { color: var(--primary-dark); font-weight: 600; }
+
+/* ---------- Animations ---------- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeInUp .5s ease both; }
+.fade-up-1 { animation-delay: .05s; }
+.fade-up-2 { animation-delay: .1s; }
+.fade-up-3 { animation-delay: .15s; }
+
+@media (max-width: 575.98px) {
+    .kx-hero { padding: 2rem 1.25rem; }
+}
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+.kx-theme-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    transition: all .18s ease;
+}
+.kx-theme-btn:hover { background: var(--grad-soft); color: var(--primary-dark); transform: rotate(-15deg); }
+
+html[data-theme="dark"] {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --text: #e8eaf2;
+    --muted: #9aa1b2;
+    --border: #2a2f3d;
+    --navy: #cdd6e6;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, .4);
+    --shadow: 0 10px 30px rgba(0, 0, 0, .5);
+    --shadow-lg: 0 20px 45px rgba(0, 0, 0, .6);
+    --grad-soft: linear-gradient(135deg, #241f3a 0%, #133036 100%);
+}
+html[data-theme="dark"] body {
+    background-image:
+        radial-gradient(900px 500px at 100% -5%, rgba(20, 184, 196, .10), transparent 60%),
+        radial-gradient(800px 500px at -10% 0%, rgba(109, 40, 217, .16), transparent 55%);
+}
+html[data-theme="dark"] .kx-navbar { background: rgba(20, 23, 32, .78); }
+html[data-theme="dark"] .kx-brand { color: var(--text); }
+html[data-theme="dark"] .kx-nav-link { color: var(--text); }
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select {
+    background: #11141c; color: var(--text); border-color: var(--border);
+}
+html[data-theme="dark"] .form-control::placeholder { color: #6b7280; }
+html[data-theme="dark"] .kx-search { background: rgba(26, 29, 39, .95); }
+html[data-theme="dark"] .kx-search .form-control,
+html[data-theme="dark"] .kx-search .form-select { background: transparent; }
+html[data-theme="dark"] .pill-genre { background: #241f3a; color: #c4b5fd; border-color: #3a2f5c; }
+html[data-theme="dark"] .pill-region { background: #0f2e33; color: #5eead4; border-color: #155e63; }
+html[data-theme="dark"] .pill-ok { background: #0c2a1e; color: #4ade80; border-color: #14532d; }
+html[data-theme="dark"] .pill-busy { background: #2e1416; color: #fca5a5; border-color: #7f1d1d; }
+html[data-theme="dark"] .pill-wait { background: #2b2410; color: #fcd34d; border-color: #78550f; }
+html[data-theme="dark"] .pill-mine { color: #c4b5fd; }
+html[data-theme="dark"] .kx-notif.yangi { background: #1b1730; }
+html[data-theme="dark"] .text-muted { color: var(--muted) !important; }
+html[data-theme="dark"] .text-dark { color: var(--text) !important; }
+html[data-theme="dark"] .border-top,
+html[data-theme="dark"] .border-bottom { border-color: var(--border) !important; }
+html[data-theme="dark"] hr { border-color: var(--border); opacity: .4; }
+html[data-theme="dark"] .kx-card-img { background: #20232e; }
+html[data-theme="dark"] .kx-panel-head.light { background: var(--surface); color: var(--text); }
+html[data-theme="dark"] .btn-close { filter: invert(1) grayscale(1); }

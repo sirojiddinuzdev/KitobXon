@@ -36,7 +36,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['kitobhon.uz', 'www.kitobhon.uz', '13.60.55.127', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'accounts',
 
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_spectacular',
     'django_celery_results',
 ]
@@ -60,6 +61,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -69,7 +71,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS':'drf_spectacular.openapi.AutoSchema'}
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 12,
+}
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'KitobXon API',
@@ -87,6 +100,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'accounts.context_processors.navbar_context',
             ],
         },
     },
@@ -117,6 +131,7 @@ CELERY_TASK_SERIALIZER = 'json'
 
 # Email sozlamalari
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'KitobXon <no-reply@kitobhon.uz>'
 
 
 # Password validation
@@ -141,13 +156,25 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'uz'
 
-TIME_ZONE = 'UTC'
+LANGUAGES = [
+    ('uz', "O‘zbekcha"),
+    ('ru', "Русский"),
+    ('en', "English"),
+]
+LOCALE_PATHS = [BASE_DIR / 'locale']
+
+TIME_ZONE = 'Asia/Tashkent'
 
 USE_I18N = True
 
 USE_TZ = True
+
+# Auth redirects
+LOGIN_URL = 'kirish'
+LOGIN_REDIRECT_URL = 'kitoblar-royhati'
+LOGOUT_REDIRECT_URL = 'kirish'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -157,4 +184,12 @@ STATIC_URL = 'static/'
 CSRF_TRUSTED_ORIGINS = [
     'https://kitobhon.uz',
     'https://www.kitobhon.uz',
+    # ngrok (sinov uchun) — pastki domen har safar o'zgaradi
+    'https://*.ngrok-free.app',
+    'https://*.ngrok.io',
+    'https://*.ngrok.app',
 ]
+# .env orqali qo'shimcha origin'lar (vergul bilan ajratilgan)
+_extra_origins = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+if _extra_origins:
+    CSRF_TRUSTED_ORIGINS += [o.strip() for o in _extra_origins.split(',') if o.strip()]

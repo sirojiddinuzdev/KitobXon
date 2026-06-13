@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -15,9 +15,15 @@ PASSWORD_VALIDATION_MESSAGES = {
 }
 
 class RegisterForm(UserCreationForm):
+    email = forms.EmailField(
+        required=True,
+        label=_('Email'),
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'email@example.com'}),
+    )
+
     class Meta:
         model = User
-        fields = ('username', 'password1', 'password2')
+        fields = ('username', 'email', 'password1', 'password2')
         labels = {
             'username': _('Foydalanuvchi nomi'),
             'password1': _('Parol'),
@@ -29,6 +35,12 @@ class RegisterForm(UserCreationForm):
             ),
             'password2': _('Oldingi parolni qayta kiriting.'),
         }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email__iexact=email).exists():
+            raise ValidationError(_("Bu email allaqachon ro'yxatdan o'tgan."))
+        return email
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -65,11 +77,29 @@ class RegisterForm(UserCreationForm):
                 raise ValidationError(errors)
         return password1
 
+class LoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].label = _('Foydalanuvchi nomi')
+        self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Foydalanuvchi nomi'})
+        self.fields['password'].label = _('Parol')
+        self.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Parol'})
+
+
 class ProfilForm(forms.ModelForm):
     class Meta:
         model = Profil
-        fields = ['telefon', 'telegram', 'instagram']
+        fields = ['avatar', 'bio', 'telefon', 'telegram', 'instagram']
+        labels = {
+            'avatar': _('Profil rasmi'),
+            'bio': _('O‘zingiz haqingizda'),
+            'telefon': _('Telefon'),
+            'telegram': _('Telegram'),
+            'instagram': _('Instagram'),
+        }
         widgets = {
+            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Qisqacha o‘zingiz haqingizda...'}),
             'telefon': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+998 12 345 67 89'}),
             'telegram': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '@username'}),
             'instagram': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '@username'})
