@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from .imaging import optimize_image_field
+
 # Create your models here.
 
 class Kitob(models.Model):
@@ -45,6 +47,11 @@ class Kitob(models.Model):
 
     def __str__(self):
         return f"{self.nomi} - {self.muallif}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Yuklangan muqovani kichraytirib, qayta siqamiz (RAM/trafik tejash)
+        optimize_image_field(self.rasm, max_w=1000, max_h=1000)
 
 class Almashitirish(models.Model):
     HOLAT_CHANGES = [

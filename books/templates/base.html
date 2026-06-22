@@ -24,7 +24,7 @@
 <nav class="kx-navbar">
     <div class="container py-2 d-flex justify-content-between align-items-center">
         <a class="kx-brand" href="{% url 'kitoblar-royhati' %}">
-            <img src="{% static 'img/logo.png' %}" alt="KitobXon" class="kx-logo-mark">
+            <img src="{% static 'img/logo.png' %}" alt="KitobXon" class="kx-logo-mark" width="60" height="60" decoding="async">
         </a>
 
         <div class="d-flex align-items-center gap-1 gap-md-2">
@@ -62,7 +62,7 @@
                 </a>
                 <a href="{% url 'profil' %}" class="kx-nav-link position-relative">
                     {% if nav_profil and nav_profil.avatar %}
-                        <img src="{{ nav_profil.avatar.url }}" class="kx-avatar" alt="avatar">
+                        <img src="{{ nav_profil.avatar.url }}" class="kx-avatar" alt="avatar" width="34" height="34" decoding="async">
                     {% else %}
                         <span class="kx-avatar">{{ request.user.username|slice:":1"|upper }}</span>
                     {% endif %}
@@ -97,7 +97,7 @@
 
 <footer class="kx-footer">
     <div class="container">
-        <p class="mb-2"><img src="{% static 'img/logo.png' %}" alt="KitobXon" style="height:48px;width:auto;opacity:.9;"></p>
+        <p class="mb-2"><img src="{% static 'img/logo.png' %}" alt="KitobXon" style="height:48px;width:auto;opacity:.9;" width="48" height="48" loading="lazy" decoding="async"></p>
         <p class="mb-0">{% trans "Kitob almashish va ulashish platformasi" %} · {% now "Y" %}</p>
     </div>
 </footer>

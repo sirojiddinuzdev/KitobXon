@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+
+from books.imaging import optimize_image_field
 # Create your models here.
 
 class Profil(models.Model):
@@ -12,6 +14,11 @@ class Profil(models.Model):
 
     def __str__(self):
         return f"{self.user.username} profili"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Avatar kichik ko'rsatiladi — 400px yetarli
+        optimize_image_field(self.avatar, max_w=400, max_h=400)
 
     @property
     def bosh_harf(self):

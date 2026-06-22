@@ -76,9 +76,9 @@
                     <div class="kx-card-img-wrap">
                         <a href="{% url 'kitob-detail' kitob.id %}">
                             {% if kitob.rasm %}
-                                <img src="{{ kitob.rasm.url }}" class="kx-card-img" alt="{{ kitob.nomi }}">
+                                <img src="{{ kitob.rasm.url }}" class="kx-card-img" alt="{{ kitob.nomi }}" loading="lazy" decoding="async" width="400" height="210">
                             {% else %}
-                                <img src="{% static 'books/default_kitob.jpg' %}" class="kx-card-img" alt="{{ kitob.nomi }}">
+                                <img src="{% static 'books/default_kitob.jpg' %}" class="kx-card-img" alt="{{ kitob.nomi }}" loading="lazy" decoding="async" width="400" height="210">
                             {% endif %}
                         </a>
                         {% if request.user.is_authenticated %}
