@@ -10,7 +10,7 @@
     <div class="kx-panel p-4 p-lg-4 mb-4 fade-up">
         <div class="d-flex flex-column flex-sm-row align-items-center gap-3 text-center text-sm-start">
             {% if profil.avatar %}
-                <img src="{{ profil.avatar.url }}" class="kx-avatar kx-avatar-lg" alt="avatar">
+                <img src="{{ profil.avatar.url }}" class="kx-avatar kx-avatar-lg" alt="avatar" width="84" height="84" decoding="async">
             {% else %}
                 <span class="kx-avatar kx-avatar-lg">{{ profil.bosh_harf }}</span>
             {% endif %}

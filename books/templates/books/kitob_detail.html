@@ -13,9 +13,9 @@
             <!-- Rasm -->
             <div class="col-md-5 kx-card-img-wrap">
                 {% if kitob.rasm %}
-                    <img src="{{ kitob.rasm.url }}" class="w-100 h-100" style="object-fit:cover;min-height:340px;" alt="{{ kitob.nomi }}">
+                    <img src="{{ kitob.rasm.url }}" class="w-100 h-100" style="object-fit:cover;min-height:340px;" alt="{{ kitob.nomi }}" decoding="async" width="500" height="340">
                 {% else %}
-                    <img src="{% static 'books/default_kitob.jpg' %}" class="w-100 h-100" style="object-fit:cover;min-height:340px;" alt="{{ kitob.nomi }}">
+                    <img src="{% static 'books/default_kitob.jpg' %}" class="w-100 h-100" style="object-fit:cover;min-height:340px;" alt="{{ kitob.nomi }}" decoding="async" width="500" height="340">
                 {% endif %}
             </div>
 
@@ -179,9 +179,9 @@
                 <div class="kx-card-img-wrap">
                     <a href="{% url 'kitob-detail' k.id %}">
                         {% if k.rasm %}
-                            <img src="{{ k.rasm.url }}" class="kx-card-img" alt="{{ k.nomi }}">
+                            <img src="{{ k.rasm.url }}" class="kx-card-img" alt="{{ k.nomi }}" loading="lazy" decoding="async" width="400" height="210">
                         {% else %}
-                            <img src="{% static 'books/default_kitob.jpg' %}" class="kx-card-img" alt="{{ k.nomi }}">
+                            <img src="{% static 'books/default_kitob.jpg' %}" class="kx-card-img" alt="{{ k.nomi }}" loading="lazy" decoding="async" width="400" height="210">
                         {% endif %}
                     </a>
                 </div>
