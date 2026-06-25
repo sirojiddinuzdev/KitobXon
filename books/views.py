@@ -37,7 +37,7 @@ def kitoblar_royhati(request):
         kitoblar = kitoblar.filter(hudud=hudud)
 
     # Pagination
-    paginator = Paginator(kitoblar, 9)
+    paginator = Paginator(kitoblar, 6)
     sahifa = request.GET.get('sahifa')
     kitoblar_sahifa = paginator.get_page(sahifa)
 
