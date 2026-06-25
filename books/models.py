@@ -30,7 +30,7 @@ class Kitob(models.Model):
         ('qoraqalpogiston', 'Qoraqalpog\'iston'),
         ('tanlanmagan','Tanlanmagan')
     ]
-    nomi = models.CharField(max_length=200)
+    nomi = models.CharField(max_length=100)
     muallif = models.CharField(max_length=100)
     tavsif = models.TextField(blank=True,null=True)
     janr = models.CharField(max_length=20,choices=Janr_Tanlov,default='badiiy')
