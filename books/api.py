@@ -1,4 +1,5 @@
 from django.db.models import Q, Avg, Count
+from django.db import transaction
 from rest_framework import viewsets, generics, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -115,6 +116,7 @@ class SorovViewSet(viewsets.ReadOnlyModelViewSet):
     """Almashtirish so'rovlari: ro'yxat (?turi=kelgan|yuborilgan), qabul/rad (egasi)."""
     serializer_class = AlmashitirishSerializer
     permission_classes = [permissions.IsAuthenticated]
+    queryset = Almashitirish.objects.all()
 
     def get_queryset(self):
         u = self.request.user
@@ -131,10 +133,20 @@ class SorovViewSet(viewsets.ReadOnlyModelViewSet):
         sorov = self.get_object()
         if sorov.kitob.ega != request.user:
             return Response({'detail': 'Faqat kitob egasi qabul qila oladi.'}, status=status.HTTP_403_FORBIDDEN)
-        sorov.holat = 'qabul'
-        sorov.save()
-        sorov.kitob.mavjud = False
-        sorov.kitob.save()
+        
+        with transaction.atomic():
+            kitob = Kitob.objects.select_for_update().get(id=sorov.kitob_id)
+            if not kitob.mavjud:
+                return Response({'detail': 'Bu kitob allaqachon boshqa kishiga berilgan.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            sorov.holat = 'qabul'
+            sorov.save()
+            
+            kitob.mavjud = False
+            kitob.save()
+            
+            Almashitirish.objects.filter(kitob=kitob, holat='kutilmoqda').exclude(id=sorov.id).update(holat='rad')
+
         bildir(sorov.yuboruvchi, f'"{sorov.kitob.nomi}" uchun so‘rovingiz qabul qilindi', '', 'success')
         return Response(AlmashitirishSerializer(sorov, context={'request': request}).data)
 

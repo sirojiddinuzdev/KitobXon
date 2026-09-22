@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q, Avg, Count
 from django.urls import reverse
+from django.db import transaction
+from django.views.decorators.http import require_POST
 
 from .models import Kitob, Almashitirish, Sevimli, Sharh, Istak
 from .forms import KitobForm, IstakForm
@@ -248,6 +250,7 @@ def istaklar(request):
 
 
 @login_required
+@require_POST
 def istak_ochirish(request, istak_id):
     istak = get_object_or_404(Istak, id=istak_id, foydalanuvchi=request.user)
     istak.delete()
@@ -277,6 +280,7 @@ def tarix(request):
 
 
 @login_required
+@require_POST
 def sevimli_toggle(request, kitob_id):
     kitob = get_object_or_404(Kitob, id=kitob_id)
     sevimli, yaratildi = Sevimli.objects.get_or_create(
@@ -301,15 +305,23 @@ def sevimlilar(request):
 
 
 @login_required
+@require_POST
 def sorov_qabul(request, sorov_id):
     sorov = get_object_or_404(Almashitirish, id=sorov_id)
 
     if sorov.kitob.ega == request.user:
-        sorov.holat = "qabul"
-        sorov.save()
+        with transaction.atomic():
+            kitob = Kitob.objects.select_for_update().get(id=sorov.kitob_id)
+            if not kitob.mavjud:
+                messages.error(request,"Bu kitob allaqachon boshqa kishiga berilgan.")
+                return redirect("profil")
+            sorov.holat = "qabul"
+            sorov.save()
 
-        sorov.kitob.mavjud = False
-        sorov.kitob.save()
+            kitob.mavjud = False
+            kitob.save()
+            Almashitirish.objects.filter(kitob=kitob,holat='kutilmoqda').exclude(id=sorov.id).update(holat='rad')
+
         if sorov.yuboruvchi.email:
             sorov_qabul_email.delay(
                 yuboruvchi_email=sorov.yuboruvchi.email,
@@ -329,6 +341,7 @@ def sorov_qabul(request, sorov_id):
 
 
 @login_required
+@require_POST
 def sorov_rad(request, sorov_id):
     sorov = get_object_or_404(Almashitirish, id=sorov_id)
 
