@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import timedelta
 
 from books.models import Almashitirish
 from .models import Profil,TasdiqlashKodi
@@ -120,9 +122,26 @@ def tasdiqlash(request):
             try:
                 tasdiqlash_kodi = TasdiqlashKodi.objects.get(
                     user_id=user_id,
-                    kod=kod,
                     tasdiqlangan=False
                 )
+
+                if tasdiqlash_kodi.urinishlar_soni >= 5:
+                    return render(request, 'accounts/tasdiqlash.html', {
+                        'form': form, 'xato': 'Urinishlar soni cheklovdan oshdi. Qayta ro\'yxatdan o\'ting.'
+                    })
+
+                if timezone.now() > tasdiqlash_kodi.yaratildi + timedelta(minutes=10):
+                    return render(request, 'accounts/tasdiqlash.html', {
+                        'form': form, 'xato': 'Kodning yaroqlilik muddati (10 daqiqa) tugagan.'
+                    })
+
+                if tasdiqlash_kodi.kod != kod:
+                    tasdiqlash_kodi.urinishlar_soni += 1
+                    tasdiqlash_kodi.save()
+                    return render(request, 'accounts/tasdiqlash.html', {
+                        'form': form, 'xato': f'Kod noto\'g\'ri! Qolgan urinishlar: {5 - tasdiqlash_kodi.urinishlar_soni}'
+                    })
+
                 tasdiqlash_kodi.tasdiqlangan = True
                 tasdiqlash_kodi.save()
 
@@ -132,10 +151,11 @@ def tasdiqlash(request):
 
                 login(request, user)
                 return redirect('kitoblar-royhati')
+
             except TasdiqlashKodi.DoesNotExist:
                 return render(request, 'accounts/tasdiqlash.html', {
                     'form': form,
-                    'xato': 'Kod noto\'g\'ri!'
+                    'xato': 'Faol tasdiqlash kodi topilmadi'
                 })
     else:
         form = TasdiqlashForm()

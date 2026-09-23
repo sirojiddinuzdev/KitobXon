@@ -50,6 +50,7 @@ class TasdiqlashKodi(models.Model):
     kod = models.CharField(max_length=6)
     yaratildi = models.DateTimeField(auto_now_add=True)
     tasdiqlangan = models.BooleanField(default=False)
+    urinishlar_soni = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.user_permissions} - {self.kod}"

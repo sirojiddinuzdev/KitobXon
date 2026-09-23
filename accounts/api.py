@@ -3,7 +3,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
+from rest_framework.throttling import AnonRateThrottle
 from .models import Profil, Bildirishnoma,TasdiqlashKodi
 from .serializers import (
     ProfilSerializer, BildirishnomaSerializer, RegisterSerializer, UserSerializer,TasdiqlashSerializer
@@ -16,6 +16,7 @@ class TasdiqlashAPI(generics.GenericAPIView):
     """Email tasdiqlash — user_id va kod yuboring."""
     serializer_class = TasdiqlashSerializer
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [AnonRateThrottle]
 
     def post(self, request, *args, **kwargs):
         ser = self.get_serializer(data=request.data)
@@ -36,6 +37,7 @@ class RegisterAPI(generics.CreateAPIView):
     """Ro'yxatdan o'tish — email ga kod yuboradi."""
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [AnonRateThrottle]
 
     def create(self, request, *args, **kwargs):
         ser = self.get_serializer(data=request.data)

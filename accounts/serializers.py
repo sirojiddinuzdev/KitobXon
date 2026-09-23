@@ -1,8 +1,11 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+from django.utils import timezone
+from datetime import timedelta
 
 from .models import Profil, Bildirishnoma,TasdiqlashKodi
+
 
 
 class ProfilSerializer(serializers.ModelSerializer):
@@ -53,11 +56,22 @@ class TasdiqlashSerializer(serializers.Serializer):
         try:
             tasdiqlash = TasdiqlashKodi.objects.get(
                 user_id=data['user_id'],
-                kod=data['kod'],
                 tasdiqlangan=False
             )
-            data['tasdiqlash'] = tasdiqlash
         except TasdiqlashKodi.DoesNotExist:
-            raise serializers.ValidationError("Kod noto'g'ri yoki eskirgan!")
+            raise serializers.ValidationError("Faol tasdiqlash kodi topilmadi.")
+
+        if tasdiqlash.urinishlar_soni >= 5:
+            raise serializers.ValidationError("Urinishlar soni cheklovdan oshdi. Qayta ro'yxatdan o'ting.")
+
+        if timezone.now() > tasdiqlash.yaratildi + timedelta(minutes=10):
+            raise serializers.ValidationError("Kodning yaroqlilik muddati (10 daqiqa) tugagan.")
+
+        if tasdiqlash.kod != data['kod']:
+            tasdiqlash.urinishlar_soni += 1
+            tasdiqlash.save()
+            raise serializers.ValidationError(f"Kod noto'g'ri! Qolgan urinishlar: {5 - tasdiqlash.urinishlar_soni}")
+
+        data['tasdiqlash'] = tasdiqlash
         return data
     
