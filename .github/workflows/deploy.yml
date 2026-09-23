@@ -1,0 +1,38 @@
+name: KitobXon Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    name: Avtomatik Tarqatish (Deploy)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Serverga ulanish va kodni yangilash
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # 1. Loyiha papkasiga kirish
+            cd ${{ secrets.PROJECT_PATH }}
+            
+            # 2. Yangi kodlarni GitHub'dan yuklab olish
+            git pull origin main
+            
+            # 3. Docker containerlarni o'chirib, yangi kod bilan qayta qurish va yoqish
+            docker compose down
+            docker compose up -d --build
+            
+            # 4. Ma'lumotlar bazasi o'zgarishlarini (migratsiyalarni) bajarish
+            docker compose exec -T web python manage.py migrate
+            
+            # 5. Statik fayllarni yig'ish (css, js, rasmlar)
+            docker compose exec -T web python manage.py collectstatic --noinput
+            
+            echo "✅ Deploy muvaffaqiyatli yakunlandi!"
