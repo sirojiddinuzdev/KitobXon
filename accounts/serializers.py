@@ -53,25 +53,13 @@ class TasdiqlashSerializer(serializers.Serializer):
     kod = serializers.CharField(max_length=6)
 
     def validate(self, data):
+        from .services import tasdiqlash_kodi_tekshirish_service
+        from django.core.exceptions import ValidationError
         try:
-            tasdiqlash = TasdiqlashKodi.objects.get(
-                user_id=data['user_id'],
-                tasdiqlangan=False
-            )
-        except TasdiqlashKodi.DoesNotExist:
-            raise serializers.ValidationError("Faol tasdiqlash kodi topilmadi.")
-
-        if tasdiqlash.urinishlar_soni >= 5:
-            raise serializers.ValidationError("Urinishlar soni cheklovdan oshdi. Qayta ro'yxatdan o'ting.")
-
-        if timezone.now() > tasdiqlash.yaratildi + timedelta(minutes=10):
-            raise serializers.ValidationError("Kodning yaroqlilik muddati (10 daqiqa) tugagan.")
-
-        if tasdiqlash.kod != data['kod']:
-            tasdiqlash.urinishlar_soni += 1
-            tasdiqlash.save()
-            raise serializers.ValidationError(f"Kod noto'g'ri! Qolgan urinishlar: {5 - tasdiqlash.urinishlar_soni}")
-
-        data['tasdiqlash'] = tasdiqlash
+            user, tasdiqlash = tasdiqlash_kodi_tekshirish_service(data['user_id'], data['kod'])
+            data['user'] = user
+            data['tasdiqlash'] = tasdiqlash
+        except ValidationError as e:
+            raise serializers.ValidationError(str(e.message if hasattr(e, 'message') else e))
         return data
     

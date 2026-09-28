@@ -8,7 +8,8 @@ from .models import Profil, Bildirishnoma,TasdiqlashKodi
 from .serializers import (
     ProfilSerializer, BildirishnomaSerializer, RegisterSerializer, UserSerializer,TasdiqlashSerializer
 )
-import random
+from .services import royxatdan_otish_service, tasdiqlash_kodi_tekshirish_service
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 
 
@@ -21,12 +22,7 @@ class TasdiqlashAPI(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         ser = self.get_serializer(data=request.data)
         ser.is_valid(raise_exception=True)
-        tasdiqlash = ser.validated_data['tasdiqlash']
-        tasdiqlash.tasdiqlangan = True
-        tasdiqlash.save()
-        user = tasdiqlash.user
-        user.is_active = True
-        user.save()
+        user = ser.validated_data['user']
         token, _ = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
@@ -42,27 +38,18 @@ class RegisterAPI(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         ser = self.get_serializer(data=request.data)
         ser.is_valid(raise_exception=True)
-        user = ser.save()
-        
-        # Hali faol emas
-        user.is_active = False
-        user.save()
-
-        # Kod yaratish va yuborish
-        kod = str(random.randint(100000, 999999))
-        TasdiqlashKodi.objects.create(user=user, kod=kod)
-
-        send_mail(
-            subject='KitobXon — Tasdiqlash kodi',
-            message=f'Sizning tasdiqlash kodingiz: {kod}',
-            from_email='kitobxon@gmail.com',
-            recipient_list=[user.email],
-        )
-
-        return Response({
-            'user_id': user.id,
-            'message': 'Email ga tasdiqlash kodi yuborildi!'
-        }, status=201)
+        try:
+            user, _ = royxatdan_otish_service(
+                username=ser.validated_data['username'],
+                email=ser.validated_data['email'],
+                password=ser.validated_data['password']
+            )
+            return Response({
+                'user_id': user.id,
+                'message': 'Email ga tasdiqlash kodi yuborildi!'
+            }, status=201)
+        except ValidationError as e:
+            return Response({'detail': str(e.message if hasattr(e, 'message') else e)}, status=400)
 
 
 class LoginAPI(ObtainAuthToken):

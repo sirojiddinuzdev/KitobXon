@@ -8,7 +8,8 @@ from datetime import timedelta
 from books.models import Almashitirish
 from .models import Profil,TasdiqlashKodi
 from .forms import ProfilForm, RegisterForm, LoginForm,TasdiqlashForm,RoyxatForm
-import random
+from .services import royxatdan_otish_service, tasdiqlash_kodi_tekshirish_service
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 
 # Create your views here.
@@ -71,25 +72,16 @@ def royhatdan_otish(request):
     if request.method == 'POST':
         form = RoyxatForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False  # ← hali faol emas
-            user.save()
-            Profil.objects.create(user=user)
-
-            # Random 6 xonali kod yaratish
-            kod = str(random.randint(100000, 999999))
-            TasdiqlashKodi.objects.create(user=user, kod=kod)
-
-            # Email yuborish
-            send_mail(
-                subject='KitobXon — Tasdiqlash kodi',
-                message=f'Sizning tasdiqlash kodingiz: {kod}',
-                from_email='kitobxon@gmail.com',
-                recipient_list=[user.email],
-            )
-
-            request.session['tasdiqlash_user_id'] = user.id
-            return redirect('tasdiqlash')
+            try:
+                user, _ = royxatdan_otish_service(
+                    username=form.cleaned_data['username'],
+                    email=form.cleaned_data['email'],
+                    password=form.cleaned_data['password1']
+                )
+                request.session['tasdiqlash_user_id'] = user.id
+                return redirect('tasdiqlash')
+            except ValidationError as e:
+                form.add_error(None, str(e.message if hasattr(e, 'message') else e))
     else:
         form = RoyxatForm()
     return render(request, 'accounts/register.html', {'form': form})
@@ -120,42 +112,13 @@ def tasdiqlash(request):
         if form.is_valid():
             kod = form.cleaned_data['kod']
             try:
-                tasdiqlash_kodi = TasdiqlashKodi.objects.get(
-                    user_id=user_id,
-                    tasdiqlangan=False
-                )
-
-                if tasdiqlash_kodi.urinishlar_soni >= 5:
-                    return render(request, 'accounts/tasdiqlash.html', {
-                        'form': form, 'xato': 'Urinishlar soni cheklovdan oshdi. Qayta ro\'yxatdan o\'ting.'
-                    })
-
-                if timezone.now() > tasdiqlash_kodi.yaratildi + timedelta(minutes=10):
-                    return render(request, 'accounts/tasdiqlash.html', {
-                        'form': form, 'xato': 'Kodning yaroqlilik muddati (10 daqiqa) tugagan.'
-                    })
-
-                if tasdiqlash_kodi.kod != kod:
-                    tasdiqlash_kodi.urinishlar_soni += 1
-                    tasdiqlash_kodi.save()
-                    return render(request, 'accounts/tasdiqlash.html', {
-                        'form': form, 'xato': f'Kod noto\'g\'ri! Qolgan urinishlar: {5 - tasdiqlash_kodi.urinishlar_soni}'
-                    })
-
-                tasdiqlash_kodi.tasdiqlangan = True
-                tasdiqlash_kodi.save()
-
-                user = tasdiqlash_kodi.user
-                user.is_active = True
-                user.save()
-
+                user, _ = tasdiqlash_kodi_tekshirish_service(user_id, kod)
                 login(request, user)
                 return redirect('kitoblar-royhati')
-
-            except TasdiqlashKodi.DoesNotExist:
+            except ValidationError as e:
                 return render(request, 'accounts/tasdiqlash.html', {
                     'form': form,
-                    'xato': 'Faol tasdiqlash kodi topilmadi'
+                    'xato': str(e.message if hasattr(e, 'message') else e)
                 })
     else:
         form = TasdiqlashForm()
