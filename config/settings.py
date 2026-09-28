@@ -33,10 +33,23 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['kitobhon.uz', 'www.kitobhon.uz', '13.60.55.127', 'localhost','127.0.0.1']
+_hosts = config('ALLOWED_HOSTS', default='kitobhon.uz,www.kitobhon.uz,13.60.55.127,localhost,127.0.0.1')
+ALLOWED_HOSTS = [h.strip() for h in _hosts.split(',') if h.strip()]
+
+import sys
+
+if not DEBUG and 'test' not in sys.argv:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 
 
 # Application definition

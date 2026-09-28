@@ -4,13 +4,13 @@ services:
   db:
     image: postgres:15
     environment:
-      POSTGRES_DB: kitobxon
-      POSTGRES_USER: kitobxon_user
-      POSTGRES_PASSWORD: kitobxon_pass
+      POSTGRES_DB: ${POSTGRES_DB:-kitobxon}
+      POSTGRES_USER: ${POSTGRES_USER:-kitobxon_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kitobxon_user -d kitobxon"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kitobxon_user} -d ${POSTGRES_DB:-kitobxon}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -21,19 +21,17 @@ services:
   web:
     build: .
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py collectstatic --noinput &&
+             python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
       - media_volume:/app/media
     ports:
       - "8000:8000"
+    env_file:
+      - .env
     environment:
-      - DEBUG=1
-      - SECRET_KEY=your-secret-key-here
-      - POSTGRES_DB=kitobxon
-      - POSTGRES_USER=kitobxon_user
-      - POSTGRES_PASSWORD=kitobxon_pass
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
       - CELERY_BROKER_URL=redis://redis:6379/0
@@ -48,12 +46,9 @@ services:
     command: celery -A config worker --loglevel=info
     volumes:
       - .:/app
+    env_file:
+      - .env
     environment:
-      - DEBUG=1
-      - SECRET_KEY=your-secret-key-here
-      - POSTGRES_DB=kitobxon
-      - POSTGRES_USER=kitobxon_user
-      - POSTGRES_PASSWORD=kitobxon_pass
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
       - CELERY_BROKER_URL=redis://redis:6379/0

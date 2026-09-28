@@ -5,3 +5,7 @@ __pycache__/
 .git/
 db.sqlite3
 *.log
+.env
+.env.*
+media/
+staticfiles/
