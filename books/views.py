@@ -199,6 +199,7 @@ def _istak_mosligini_tekshir(yangi_kitob):
 
 
 @login_required
+@require_POST
 def sorov_yuborish(request, kitob_id):
     kitob = get_object_or_404(Kitob, id=kitob_id)
 

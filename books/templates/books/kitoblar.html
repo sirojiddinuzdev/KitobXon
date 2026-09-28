@@ -113,8 +113,11 @@
                                 {% if kitob.id in yuborilgan_kitob_idlar %}
                                     <span class="pill pill-wait"><i class="bi bi-check-circle-fill"></i> {% trans "Yuborildi" %}</span>
                                 {% else %}
-                                    <a href="{% url 'sorov-yuborish' kitob.id %}?next={{ request.get_full_path|urlencode }}"
-                                       class="btn btn-grad btn-sm"><i class="bi bi-send me-1"></i>{% trans "So'rov" %}</a>
+                                    <form method="POST" action="{% url 'sorov-yuborish' kitob.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button type="submit" class="btn btn-grad btn-sm"><i class="bi bi-send me-1"></i>{% trans "So'rov" %}</button>
+                                    </form>
                                 {% endif %}
                             {% else %}
                                 <span class="pill pill-mine">{% trans "Sizniki" %}</span>
