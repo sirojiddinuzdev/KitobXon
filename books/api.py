@@ -8,6 +8,8 @@ from .models import Kitob, Almashitirish, Sevimli, Sharh
 from .serializers import (
     KitobSerializer, AlmashitirishSerializer, SevimliSerializer, SharhSerializer,
 )
+from .services import qabul_qilish_service, rad_etish_service
+from django.core.exceptions import ValidationError
 from accounts.utils import bildir
 
 
@@ -131,31 +133,21 @@ class SorovViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=['post'])
     def qabul(self, request, pk=None):
         sorov = self.get_object()
-        if sorov.kitob.ega != request.user:
-            return Response({'detail': 'Faqat kitob egasi qabul qila oladi.'}, status=status.HTTP_403_FORBIDDEN)
-        
-        with transaction.atomic():
-            kitob = Kitob.objects.select_for_update().get(id=sorov.kitob_id)
-            if not kitob.mavjud:
-                return Response({'detail': 'Bu kitob allaqachon boshqa kishiga berilgan.'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            sorov.holat = 'qabul'
-            sorov.save()
-            
-            kitob.mavjud = False
-            kitob.save()
-            
-            Almashitirish.objects.filter(kitob=kitob, holat='kutilmoqda').exclude(id=sorov.id).update(holat='rad')
-
-        bildir(sorov.yuboruvchi, f'"{sorov.kitob.nomi}" uchun so‘rovingiz qabul qilindi', '', 'success')
-        return Response(AlmashitirishSerializer(sorov, context={'request': request}).data)
+        try:
+            sorov = qabul_qilish_service(sorov.id, request.user)
+            return Response(AlmashitirishSerializer(sorov, context={'request': request}).data)
+        except ValidationError as e:
+            msg = str(e.message if hasattr(e, 'message') else e)
+            status_code = status.HTTP_403_FORBIDDEN if "egasi" in msg else status.HTTP_400_BAD_REQUEST
+            return Response({'detail': msg}, status=status_code)
 
     @action(detail=True, methods=['post'])
     def rad(self, request, pk=None):
         sorov = self.get_object()
-        if sorov.kitob.ega != request.user:
-            return Response({'detail': 'Faqat kitob egasi rad eta oladi.'}, status=status.HTTP_403_FORBIDDEN)
-        sorov.holat = 'rad'
-        sorov.save()
-        bildir(sorov.yuboruvchi, f'"{sorov.kitob.nomi}" uchun so‘rovingiz rad etildi', '', 'warning')
-        return Response(AlmashitirishSerializer(sorov, context={'request': request}).data)
+        try:
+            sorov = rad_etish_service(sorov.id, request.user)
+            return Response(AlmashitirishSerializer(sorov, context={'request': request}).data)
+        except ValidationError as e:
+            msg = str(e.message if hasattr(e, 'message') else e)
+            status_code = status.HTTP_403_FORBIDDEN if "egasi" in msg else status.HTTP_400_BAD_REQUEST
+            return Response({'detail': msg}, status=status_code)

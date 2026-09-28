@@ -10,6 +10,8 @@ from django.views.decorators.http import require_POST
 from .models import Kitob, Almashitirish, Sevimli, Sharh, Istak
 from .forms import KitobForm, IstakForm
 from .tasks import sorov_qabul_email
+from .services import qabul_qilish_service, rad_etish_service
+from django.core.exceptions import ValidationError
 from accounts.utils import bildir
 
 # Create your views here.
@@ -308,35 +310,11 @@ def sevimlilar(request):
 @login_required
 @require_POST
 def sorov_qabul(request, sorov_id):
-    sorov = get_object_or_404(Almashitirish, id=sorov_id)
-
-    if sorov.kitob.ega == request.user:
-        with transaction.atomic():
-            kitob = Kitob.objects.select_for_update().get(id=sorov.kitob_id)
-            if not kitob.mavjud:
-                messages.error(request,"Bu kitob allaqachon boshqa kishiga berilgan.")
-                return redirect("profil")
-            sorov.holat = "qabul"
-            sorov.save()
-
-            kitob.mavjud = False
-            kitob.save()
-            Almashitirish.objects.filter(kitob=kitob,holat='kutilmoqda').exclude(id=sorov.id).update(holat='rad')
-
-        if sorov.yuboruvchi.email:
-            sorov_qabul_email.delay(
-                yuboruvchi_email=sorov.yuboruvchi.email,
-                kitob_nomi=sorov.kitob.nomi,
-                ega_username=request.user.username,
-            )
-
-        bildir(
-            sorov.yuboruvchi,
-            f'"{sorov.kitob.nomi}" uchun so‘rovingiz qabul qilindi! Egasi bilan bog‘laning.',
-            reverse('profil'),
-            'success',
-        )
+    try:
+        sorov = qabul_qilish_service(sorov_id, request.user)
         messages.success(request, f"{sorov.yuboruvchi.username} ning so‘rovi qabul qilindi")
+    except ValidationError as e:
+        messages.error(request, str(e.message if hasattr(e, 'message') else e))
 
     return redirect('profil')
 
@@ -344,17 +322,10 @@ def sorov_qabul(request, sorov_id):
 @login_required
 @require_POST
 def sorov_rad(request, sorov_id):
-    sorov = get_object_or_404(Almashitirish, id=sorov_id)
-
-    if sorov.kitob.ega == request.user:
-        sorov.holat = 'rad'
-        sorov.save()
-        bildir(
-            sorov.yuboruvchi,
-            f'"{sorov.kitob.nomi}" uchun so‘rovingiz rad etildi',
-            reverse('profil'),
-            'warning',
-        )
+    try:
+        sorov = rad_etish_service(sorov_id, request.user)
         messages.warning(request, f"{sorov.yuboruvchi.username} ning so‘rovi rad etildi")
+    except ValidationError as e:
+        messages.error(request, str(e.message if hasattr(e, 'message') else e))
 
     return redirect('profil')

@@ -115,7 +115,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.postgresql'),
         'NAME': os.environ.get('POSTGRES_DB', 'kitobxon'),
         'USER': os.environ.get('POSTGRES_USER', 'kitobxon_user'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'kitobxon_pass'),

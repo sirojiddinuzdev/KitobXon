@@ -94,3 +94,24 @@ class KitobViewSetTestCase(APITestCase):
         data = {'baho': 5, 'matn': 'Zor!'}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_almashitirish_state_machine_prevents_re_transition(self):
+        from books.models import Almashitirish
+        # user2 kitob1 ga so'rov yuboradi
+        sorov = Almashitirish.objects.create(kitob=self.kitob1, yuboruvchi=self.user2)
+        
+        # user1 so'rovni qabul qiladi
+        self.client.force_authenticate(self.user1)
+        qabul_url = reverse('api-sorov-qabul', args=[sorov.id])
+        res1 = self.client.post(qabul_url)
+        self.assertEqual(res1.status_code, status.HTTP_200_OK)
+        
+        # Kitob1 band bo'lgan bo'lishi kerak
+        self.kitob1.refresh_from_db()
+        self.assertFalse(self.kitob1.mavjud)
+
+        # Allaqachon qabul qilingan so'rovni qayta rad etish mumkin bo'lmasligi kerak (400 Bad Request)
+        rad_url = reverse('api-sorov-rad', args=[sorov.id])
+        res2 = self.client.post(rad_url)
+        self.assertEqual(res2.status_code, status.HTTP_400_BAD_REQUEST)
+
