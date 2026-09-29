@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Django Tests (PostgreSQL + Redis)
+    name: Testlar va Xavfsizlik Tekshiruvi (PostgreSQL + Redis)
     runs-on: ubuntu-latest
 
     services:
@@ -37,8 +37,7 @@ jobs:
           --health-retries 5
 
     env:
-      # Test muhiti uchun — production SECRET_KEY GitHub Secrets'da saqlanadi
-      SECRET_KEY: ${{ secrets.SECRET_KEY || 'ci-only-not-prod-aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnn' }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY || 'ci-test-key-aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnn12345678' }}
       DEBUG: "True"
       POSTGRES_DB: kitobxon_test
       POSTGRES_USER: kitobxon_user
@@ -63,20 +62,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Migratsiyalar to'g'riligini tekshirish
+      - name: Migration drift tekshiruvi
         run: |
           python manage.py migrate --run-syncdb
           python manage.py makemigrations --check --dry-run
 
-      - name: Xavfsizlik tekshiruvi (production sozlamalari bilan)
+      - name: Production xavfsizlik tekshiruvi (check --deploy)
         env:
-          # check --deploy uchun DEBUG=False va kuchli SECRET_KEY
           DEBUG: "False"
-          SECRET_KEY: ${{ secrets.SECRET_KEY || 'ci-deploy-check-aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnoooppp' }}
-          SECURE_SSL_REDIRECT: "False"  # CI'da HTTPS yo'q, SSL redirect o'chiriladi
+          SECRET_KEY: ${{ secrets.SECRET_KEY || 'ci-deploy-check-aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnoooppp123' }}
+          SECURE_SSL_REDIRECT: "False"
         run: |
           python manage.py check --deploy --fail-level CRITICAL
 
-      - name: Testlarni ishga tushirish (PostgreSQL bilan)
+      - name: Barcha testlarni ishga tushirish (PostgreSQL bilan)
         run: |
-          python manage.py test --verbosity=2 --keepdb
+          python manage.py test --verbosity=2

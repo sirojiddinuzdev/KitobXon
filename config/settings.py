@@ -40,9 +40,13 @@ ALLOWED_HOSTS = [h.strip() for h in _hosts.split(',') if h.strip()]
 
 import sys
 
+TESTING = 'test' in sys.argv
+
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    # Test vaqtida HTTPS yo'q — SSL redirect testlarni buzadi (302 loop)
+    # CI va lokal testlar uchun SECURE_SSL_REDIRECT=False env o'zgaruvchisi orqali o'chiriladi
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=not TESTING, cast=bool)
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
@@ -50,6 +54,7 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
 
 
 # Application definition
