@@ -1,11 +1,13 @@
 import unittest
+import unittest.mock
 from django.urls import reverse
-from django.test import TestCase, Client
+from django.test import TestCase, TransactionTestCase, Client
 from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from books.models import Kitob, Sharh, Almashitirish, Sevimli
 from django.contrib.auth import get_user_model
+
 
 User = get_user_model()
 
@@ -174,11 +176,14 @@ class BooksWebViewsTestCase(TestCase):
 
 
 @unittest.skipUnless(_is_postgres(), "Bu test faqat PostgreSQL bilan ishlaydigan muhitda o'tkaziladi (SQLite row locking'ni qo'llab-quvvatlamaydi)")
-class PostgreSQLConcurrencyTestCase(TestCase):
+class PostgreSQLConcurrencyTestCase(TransactionTestCase):
     """
     PostgreSQL select_for_update (Row Locking) ni isbotlovchi test.
-    Ikki parallel tranzaksiya bir vaqtda bitta kitobni qabul qilmoqchi bo'ladi.
-    Faqat bittasi muvaffaqiyatli, ikkinchisi xato berishi kerak.
+
+    TransactionTestCase ishlatiladi — oddiy TestCase barcha testlarni bitta
+    tranzaksiya ichida o'raydi, shuning uchun parallel threadlar yangi
+    ma'lumotlarni ko'ra olmaydi. TransactionTestCase har test uchun haqiqiy
+    COMMIT qiladi, bu esa real concurrency sinoviga imkon beradi.
     """
 
     def setUp(self):
@@ -189,26 +194,34 @@ class PostgreSQLConcurrencyTestCase(TestCase):
             nomi='Locking Testi', muallif='Test', janr='it', ega=self.user1
         )
 
-    def test_double_accept_only_one_succeeds(self):
+    @unittest.mock.patch('books.services.sorov_qabul_email')
+    def test_double_accept_only_one_succeeds(self, mock_email):
         """
         Bitta kitobga ikki so'rov bor. Ikkalasi bir vaqtda qabul qilinmoqchi bo'lsa,
         faqat bittasi o'tishi va kitob holati izchil bo'lishi kerak.
         """
-        from threading import Thread
+        from threading import Thread, Barrier
+        from django.db import close_old_connections
         from books.services import qabul_qilish_service
-        from django.core.exceptions import ValidationError
 
         sorov2 = Almashitirish.objects.create(kitob=self.kitob, yuboruvchi=self.user2)
         sorov3 = Almashitirish.objects.create(kitob=self.kitob, yuboruvchi=self.user3)
 
         results = []
+        # Barrier: ikkala thread ham bir vaqtda boshlansin
+        barrier = Barrier(2)
 
         def try_accept(sorov_id):
+            # Thread-ga yangi DB connection berish
+            close_old_connections()
             try:
+                barrier.wait()  # Ikkalasi tayyor bo'lgunicha kutish
                 qabul_qilish_service(sorov_id, self.user1)
                 results.append('success')
             except Exception:
                 results.append('failed')
+            finally:
+                close_old_connections()
 
         t1 = Thread(target=try_accept, args=[sorov2.id])
         t2 = Thread(target=try_accept, args=[sorov3.id])
@@ -218,10 +231,9 @@ class PostgreSQLConcurrencyTestCase(TestCase):
         t2.join()
 
         # Faqat bittasi muvaffaqiyatli bo'lishi kerak
-        self.assertEqual(results.count('success'), 1)
-        self.assertEqual(results.count('failed'), 1)
+        self.assertEqual(results.count('success'), 1, f"Natijalar: {results}")
+        self.assertEqual(results.count('failed'), 1, f"Natijalar: {results}")
 
         # Kitob bazada band holida bo'lishi kerak
         self.kitob.refresh_from_db()
         self.assertFalse(self.kitob.mavjud)
-
