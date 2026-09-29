@@ -37,7 +37,8 @@ jobs:
           --health-retries 5
 
     env:
-      SECRET_KEY: test-secret-key-for-ci-only-not-production
+      # Test muhiti uchun — production SECRET_KEY GitHub Secrets'da saqlanadi
+      SECRET_KEY: ${{ secrets.SECRET_KEY || 'ci-only-not-prod-aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnn' }}
       DEBUG: "True"
       POSTGRES_DB: kitobxon_test
       POSTGRES_USER: kitobxon_user
@@ -46,6 +47,7 @@ jobs:
       POSTGRES_PORT: "5432"
       CELERY_BROKER_URL: redis://localhost:6379/0
       EMAIL_BACKEND: django.core.mail.backends.locmem.EmailBackend
+      SECURE_SSL_REDIRECT: "False"
 
     steps:
       - name: Kodni yuklab olish
@@ -65,6 +67,15 @@ jobs:
         run: |
           python manage.py migrate --run-syncdb
           python manage.py makemigrations --check --dry-run
+
+      - name: Xavfsizlik tekshiruvi (production sozlamalari bilan)
+        env:
+          # check --deploy uchun DEBUG=False va kuchli SECRET_KEY
+          DEBUG: "False"
+          SECRET_KEY: ${{ secrets.SECRET_KEY || 'ci-deploy-check-aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnoooppp' }}
+          SECURE_SSL_REDIRECT: "False"  # CI'da HTTPS yo'q, SSL redirect o'chiriladi
+        run: |
+          python manage.py check --deploy --fail-level CRITICAL
 
       - name: Testlarni ishga tushirish (PostgreSQL bilan)
         run: |

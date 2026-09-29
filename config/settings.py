@@ -40,7 +40,7 @@ ALLOWED_HOSTS = [h.strip() for h in _hosts.split(',') if h.strip()]
 
 import sys
 
-if not DEBUG and 'test' not in sys.argv:
+if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
     SESSION_COOKIE_SECURE = True
