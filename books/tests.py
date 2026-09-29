@@ -1,11 +1,18 @@
+import unittest
 from django.urls import reverse
 from django.test import TestCase, Client
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from books.models import Kitob, Sharh, Almashitirish, Sevimli
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+# PostgreSQL mavjudligini tekshiramiz
+def _is_postgres():
+    db = settings.DATABASES.get('default', {})
+    return 'postgresql' in db.get('ENGINE', '') or 'postgis' in db.get('ENGINE', '')
 
 
 class KitobViewSetTestCase(APITestCase):
@@ -164,3 +171,57 @@ class BooksWebViewsTestCase(TestCase):
         url = reverse('sorov-rad', args=[sorov.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 405)
+
+
+@unittest.skipUnless(_is_postgres(), "Bu test faqat PostgreSQL bilan ishlaydigan muhitda o'tkaziladi (SQLite row locking'ni qo'llab-quvvatlamaydi)")
+class PostgreSQLConcurrencyTestCase(TestCase):
+    """
+    PostgreSQL select_for_update (Row Locking) ni isbotlovchi test.
+    Ikki parallel tranzaksiya bir vaqtda bitta kitobni qabul qilmoqchi bo'ladi.
+    Faqat bittasi muvaffaqiyatli, ikkinchisi xato berishi kerak.
+    """
+
+    def setUp(self):
+        self.user1 = User.objects.create_user(username='lock_user1', password='pass')
+        self.user2 = User.objects.create_user(username='lock_user2', password='pass')
+        self.user3 = User.objects.create_user(username='lock_user3', password='pass')
+        self.kitob = Kitob.objects.create(
+            nomi='Locking Testi', muallif='Test', janr='it', ega=self.user1
+        )
+
+    def test_double_accept_only_one_succeeds(self):
+        """
+        Bitta kitobga ikki so'rov bor. Ikkalasi bir vaqtda qabul qilinmoqchi bo'lsa,
+        faqat bittasi o'tishi va kitob holati izchil bo'lishi kerak.
+        """
+        from threading import Thread
+        from books.services import qabul_qilish_service
+        from django.core.exceptions import ValidationError
+
+        sorov2 = Almashitirish.objects.create(kitob=self.kitob, yuboruvchi=self.user2)
+        sorov3 = Almashitirish.objects.create(kitob=self.kitob, yuboruvchi=self.user3)
+
+        results = []
+
+        def try_accept(sorov_id):
+            try:
+                qabul_qilish_service(sorov_id, self.user1)
+                results.append('success')
+            except Exception:
+                results.append('failed')
+
+        t1 = Thread(target=try_accept, args=[sorov2.id])
+        t2 = Thread(target=try_accept, args=[sorov3.id])
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+
+        # Faqat bittasi muvaffaqiyatli bo'lishi kerak
+        self.assertEqual(results.count('success'), 1)
+        self.assertEqual(results.count('failed'), 1)
+
+        # Kitob bazada band holida bo'lishi kerak
+        self.kitob.refresh_from_db()
+        self.assertFalse(self.kitob.mavjud)
+
