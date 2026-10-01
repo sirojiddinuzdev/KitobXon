@@ -174,6 +174,32 @@ class BooksWebViewsTestCase(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 405)
 
+    def test_open_redirect_prevented_in_sorov_yuborish(self):
+        """?next= orqali tashqi saytga open redirect taqiqlanishi kerak (xavfsizlik)."""
+        self.client.force_login(self.user2)
+        url = reverse('sorov-yuborish', args=[self.kitob.id])
+        # Tashqi URL ga yo'naltirishga urinish
+        response = self.client.post(url, data={'next': 'https://zararli.com'})
+        # 302 bo'lishi kerak, lekin tashqi URL ga EMAS
+        self.assertEqual(response.status_code, 302)
+        redirect_url = response['Location']
+        self.assertFalse(
+            redirect_url.startswith('https://zararli.com'),
+            f"Open redirect aniqlandi: {redirect_url}"
+        )
+
+    def test_open_redirect_prevented_in_sevimli(self):
+        """sevimli_toggle da ?next= orqali tashqi saytga open redirect taqiqlanishi kerak."""
+        self.client.force_login(self.user2)
+        url = reverse('sevimli-toggle', args=[self.kitob.id])
+        response = self.client.post(url, data={'next': 'https://phishing.com'})
+        self.assertEqual(response.status_code, 302)
+        redirect_url = response['Location']
+        self.assertFalse(
+            redirect_url.startswith('https://phishing.com'),
+            f"Open redirect aniqlandi: {redirect_url}"
+        )
+
 
 @unittest.skipUnless(_is_postgres(), "Bu test faqat PostgreSQL bilan ishlaydigan muhitda o'tkaziladi (SQLite row locking'ni qo'llab-quvvatlamaydi)")
 class PostgreSQLConcurrencyTestCase(TransactionTestCase):

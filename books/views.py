@@ -6,6 +6,7 @@ from django.db.models import Q, Avg, Count
 from django.urls import reverse
 from django.db import transaction
 from django.views.decorators.http import require_POST
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import Kitob, Almashitirish, Sevimli, Sharh, Istak
 from .forms import KitobForm, IstakForm
@@ -13,6 +14,19 @@ from .tasks import sorov_qabul_email
 from .services import qabul_qilish_service, rad_etish_service
 from django.core.exceptions import ValidationError
 from accounts.utils import bildir
+
+
+def _xavfsiz_next(request, fallback='kitoblar-royhati'):
+    """?next= parametrini tekshirib, faqat bir xil hostga yo'naltiradi.
+    Tashqi URL larga open redirect xurujini oldini oladi."""
+    next_url = request.POST.get('next') or request.GET.get('next', '')
+    if next_url and url_has_allowed_host_and_scheme(
+        url=next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return next_url
+    return fallback
 
 # Create your views here.
 # REST API endi books/api.py va config/urls.py da (DRF router).
@@ -232,7 +246,7 @@ def sorov_yuborish(request, kitob_id):
     else:
         messages.info(request, 'Siz allaqachon so‘rov yuborgansiz.')
 
-    return redirect(request.POST.get('next') or request.GET.get('next') or 'kitoblar-royhati')
+    return redirect(_xavfsiz_next(request))
 
 
 @login_required
@@ -295,7 +309,7 @@ def sevimli_toggle(request, kitob_id):
         messages.info(request, f'"{kitob.nomi}" sevimlilardan olib tashlandi.')
     else:
         messages.success(request, f'"{kitob.nomi}" sevimlilarga qo‘shildi.')
-    return redirect(request.GET.get('next') or 'kitoblar-royhati')
+    return redirect(_xavfsiz_next(request))
 
 
 @login_required
