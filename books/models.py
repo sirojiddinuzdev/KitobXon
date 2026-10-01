@@ -54,19 +54,28 @@ class Kitob(models.Model):
         optimize_image_field(self.rasm, max_w=1000, max_h=1000)
 
 class Almashitirish(models.Model):
-    HOLAT_CHANGES = [
-        ('kutilmoqda',"Kutilmoqda"),
-        ('qabul','Qabul qilindi'),
-        ('rad','Rad etildi')
-    ]
-    kitob = models.ForeignKey(Kitob,on_delete=models.CASCADE,related_name='sorovlar')
-    yuboruvchi = models.ForeignKey(User,on_delete=models.CASCADE,related_name='yuborilgan_sorovlar')
+    class Holat(models.TextChoices):
+        """
+        Almashtirish so'rovining holat mashina (State Machine).
+        Yagona manba — barcha holat qoidalari shu yerda.
+        """
+        KUTILMOQDA = 'kutilmoqda', 'Kutilmoqda'
+        QABUL      = 'qabul',      'Qabul qilindi'
+        RAD        = 'rad',        'Rad etildi'
+
+    # Terminal holatlar — bu holatdan o'tib bo'lmaydi
+    TERMINAL_HOLATLAR = {Holat.QABUL, Holat.RAD}
+
+    kitob = models.ForeignKey(Kitob, on_delete=models.CASCADE, related_name='sorovlar')
+    yuboruvchi = models.ForeignKey(User, on_delete=models.CASCADE, related_name='yuborilgan_sorovlar')
     taklif_kitob = models.ForeignKey(
         Kitob, on_delete=models.SET_NULL, null=True, blank=True,
         related_name='taklif_qilingan',
         help_text='Almashtirishga taklif qilingan kitob (ixtiyoriy)'
     )
-    holat = models.CharField(max_length=20,choices=HOLAT_CHANGES,default='kutilmoqda')
+    holat = models.CharField(
+        max_length=20, choices=Holat.choices, default=Holat.KUTILMOQDA
+    )
     yaratildi = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -74,6 +83,15 @@ class Almashitirish(models.Model):
 
     def __str__(self):
         return f"{self.yuboruvchi} => {self.kitob}"
+
+    # ── Holat yordamchi metodlari ──────────────────────────────────────────
+    def kutilmoqdami(self) -> bool:
+        """So'rov hali kutilmoqda holatidami?"""
+        return self.holat == self.Holat.KUTILMOQDA
+
+    def yakunlandimi(self) -> bool:
+        """So'rov terminal holatdami (qabul yoki rad)?"""
+        return self.holat in self.TERMINAL_HOLATLAR
 
 
 class Istak(models.Model):

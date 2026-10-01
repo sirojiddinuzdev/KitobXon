@@ -1,16 +1,16 @@
 from django.db.models import Q, Avg, Count
-from django.db import transaction
 from rest_framework import viewsets, generics, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.core.exceptions import ValidationError
 
 from .models import Kitob, Almashitirish, Sevimli, Sharh
 from .serializers import (
     KitobSerializer, AlmashitirishSerializer, SevimliSerializer, SharhSerializer,
 )
 from .services import qabul_qilish_service, rad_etish_service
-from django.core.exceptions import ValidationError
 from accounts.utils import bildir
+
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):

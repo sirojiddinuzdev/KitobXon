@@ -6,11 +6,14 @@ from .models import Kitob, Almashitirish
 from .tasks import sorov_qabul_email
 from accounts.utils import bildir
 
+# Qulaylik uchun alias
+Holat = Almashitirish.Holat
+
 
 def qabul_qilish_service(sorov_id, user):
     """
     Almashtirish so'rovini atomik tarzda qabul qilish.
-    Faqat 'kutilmoqda' holatidagi va mavjud kitoblarni qabul qilishga ruxsat beriladi.
+    Holat qoidalari: Almashitirish.Holat (yagona manba).
     """
     with transaction.atomic():
         try:
@@ -21,20 +24,23 @@ def qabul_qilish_service(sorov_id, user):
         if sorov.kitob.ega != user:
             raise ValidationError("Faqat kitob egasi so'rovni qabul qila oladi.")
 
-        if sorov.holat != 'kutilmoqda':
+        if not sorov.kutilmoqdami():
             raise ValidationError("Faqat kutilayotgan so'rovlarni qabul qilish mumkin.")
 
         kitob = Kitob.objects.select_for_update().get(id=sorov.kitob_id)
         if not kitob.mavjud:
             raise ValidationError("Bu kitob allaqachon boshqa kishiga berilgan.")
 
-        sorov.holat = 'qabul'
+        sorov.holat = Holat.QABUL
         sorov.save()
 
         kitob.mavjud = False
         kitob.save()
 
-        Almashitirish.objects.filter(kitob=kitob, holat='kutilmoqda').exclude(id=sorov.id).update(holat='rad')
+        # Boshqa kutilayotgan so'rovlarni rad etamiz
+        Almashitirish.objects.filter(
+            kitob=kitob, holat=Holat.KUTILMOQDA
+        ).exclude(id=sorov.id).update(holat=Holat.RAD)
 
     # Tranzaksiyadan so'ng bildirishnoma va email yuborish
     if sorov.yuboruvchi.email:
@@ -49,7 +55,7 @@ def qabul_qilish_service(sorov_id, user):
 
     bildir(
         sorov.yuboruvchi,
-        f'"{sorov.kitob.nomi}" uchun so‘rovingiz qabul qilindi! Egasi bilan bog‘laning.',
+        f'"{sorov.kitob.nomi}" uchun so\'rovingiz qabul qilindi! Egasi bilan bog\'laning.',
         reverse('profil'),
         'success',
     )
@@ -59,7 +65,7 @@ def qabul_qilish_service(sorov_id, user):
 def rad_etish_service(sorov_id, user):
     """
     Almashtirish so'rovini atomik tarzda rad etish.
-    Faqat 'kutilmoqda' holatidagi so'rovlarni rad etishga ruxsat beriladi.
+    Holat qoidalari: Almashitirish.Holat (yagona manba).
     """
     with transaction.atomic():
         try:
@@ -70,15 +76,15 @@ def rad_etish_service(sorov_id, user):
         if sorov.kitob.ega != user:
             raise ValidationError("Faqat kitob egasi so'rovni rad eta oladi.")
 
-        if sorov.holat != 'kutilmoqda':
+        if not sorov.kutilmoqdami():
             raise ValidationError("Faqat kutilayotgan so'rovlarni rad etish mumkin.")
 
-        sorov.holat = 'rad'
+        sorov.holat = Holat.RAD
         sorov.save()
 
     bildir(
         sorov.yuboruvchi,
-        f'"{sorov.kitob.nomi}" uchun so‘rovingiz rad etildi',
+        f'"{sorov.kitob.nomi}" uchun so\'rovingiz rad etildi',
         reverse('profil'),
         'warning',
     )

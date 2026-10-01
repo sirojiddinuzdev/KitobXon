@@ -273,11 +273,12 @@ def izlanayotgan(request):
 @login_required
 def tarix(request):
     """Almashinuv tarixi/arxivi: hal qilingan (qabul/rad) so'rovlar."""
+    terminal = Almashitirish.TERMINAL_HOLATLAR
     kelgan = Almashitirish.objects.filter(
-        kitob__ega=request.user, holat__in=['qabul', 'rad']
+        kitob__ega=request.user, holat__in=terminal
     ).select_related('kitob', 'yuboruvchi', 'taklif_kitob')
     yuborilgan = Almashitirish.objects.filter(
-        yuboruvchi=request.user, holat__in=['qabul', 'rad']
+        yuboruvchi=request.user, holat__in=terminal
     ).select_related('kitob', 'kitob__ega', 'taklif_kitob')
     return render(request, 'books/tarix.html', {'kelgan': kelgan, 'yuborilgan': yuborilgan})
 
