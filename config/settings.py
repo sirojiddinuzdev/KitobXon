@@ -224,3 +224,63 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'KitobXon <ysirojiddin007@gmail.com>'
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+# Barcha xatolar va ogohlantirishlar:
+#   - konsolga chiqariladi (development)
+#   - logs/app.log fayliga yoziladi (production)
+import os as _os
+_os.makedirs(_os.path.join(BASE_DIR, 'logs'), exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'app.log',
+            'maxBytes': 5 * 1024 * 1024,   # 5 MB
+            'backupCount': 3,
+            'formatter': 'verbose',
+            'level': 'WARNING',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        # Loyiha loggerlari — DEBUG da ham INFO ko'rinsin
+        'books': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'accounts': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        # Django va DRF xatolarini faylga yoz
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'celery': {
+            'handlers': ['console', 'file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}

@@ -13,3 +13,6 @@ media/
 *.mkv
 *.zip
 .venv_check/
+# Log fayllar
+logs/
+*.log

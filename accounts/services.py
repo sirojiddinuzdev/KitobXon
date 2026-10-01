@@ -1,3 +1,4 @@
+import logging
 import secrets
 from datetime import timedelta
 from django.db import transaction
@@ -9,6 +10,7 @@ from django.contrib.auth import get_user_model
 from .models import Profil, TasdiqlashKodi
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 def royxatdan_otish_service(username, email, password):
@@ -39,6 +41,10 @@ def royxatdan_otish_service(username, email, password):
             )
         except Exception as e:
             # Exception tashlash transaction.atomic ni ROLLBACK qiladi
+            logger.error(
+                "royxatdan_otish_service: SMTP xatosi, foydalanuvchi rollback qilindi | email=%s | xato=%s",
+                email, e,
+            )
             raise ValidationError("Email yuborishda xatolik yuz berdi. Iltimos qayta urining.") from e
 
     return user, tasdiqlash_kodi
@@ -58,9 +64,17 @@ def tasdiqlash_kodi_tekshirish_service(user_id, kod):
             raise ValidationError("Faol tasdiqlash kodi topilmadi.")
 
         if tasdiqlash_kodi.urinishlar_soni >= 5:
+            logger.warning(
+                "tasdiqlash_kodi_tekshirish: urinishlar chekidan oshdi | user_id=%s",
+                user_id,
+            )
             raise ValidationError("Urinishlar soni cheklovdan oshdi. Qayta ro'yxatdan o'ting.")
 
         if timezone.now() > tasdiqlash_kodi.yaratildi + timedelta(minutes=10):
+            logger.warning(
+                "tasdiqlash_kodi_tekshirish: muddati tugagan OTP ishlatilmoqda | user_id=%s",
+                user_id,
+            )
             raise ValidationError("Kodning yaroqlilik muddati (10 daqiqa) tugagan.")
 
         if tasdiqlash_kodi.kod != str(kod).strip():
